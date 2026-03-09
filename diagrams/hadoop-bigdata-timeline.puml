@@ -1,0 +1,72 @@
+@startuml
+title Evolução do Ecossistema Big Data
+
+skinparam backgroundColor #FFFFFF
+skinparam note {
+  BorderColor #333333
+  FontColor #000000
+  FontSize 12
+  FontName Arial
+  BorderThickness 1
+  RoundCorner 20
+}
+
+note as N2004 #AED6F1
+2004:
+- Google publica paper MapReduce
+- Google publica GFS (Google File System)
+end note
+
+note as N2006 #A9DFBF
+2006:
+- Doug Cutting cria Hadoop (MapReduce + HDFS)
+end note
+
+note as N2007 #F9E79F
+2007:
+- Yahoo adota e impulsiona Hadoop
+end note
+
+note as N2008 #FAD7A0
+2008:
+- Hive (Facebook)
+- Pig (Yahoo)
+- HBase
+end note
+
+note as N2012 #F5B7B1
+2012:
+- Hadoop 2.0 introduz o YARN
+end note
+
+note as N2014 #D7BDE2
+2014:
+- Apache Spark (UC Berkeley)
+end note
+
+note as N2015 #85C1E9
+2015:
+- Amazon S3 se consolida como Data Lake
+end note
+
+note as N2019 #F8C471
+2019:
+- Delta Lake (Databricks)
+end note
+
+note as N2020 #F1948A
+2020:
+- Apache Iceberg (Netflix)
+- Apache Hudi (Uber)
+- Trino (ex-PrestoSQL)
+end note
+
+N2004 --> N2006
+N2006 -> N2007
+N2007 --> N2008
+N2008 -> N2012
+N2012 --> N2014
+N2014 -> N2015
+N2015 -> N2019
+N2019 -> N2020
+@enduml
