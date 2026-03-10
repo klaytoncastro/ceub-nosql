@@ -73,11 +73,80 @@ O **MongoDB Express** é uma interface gráfica que facilita a administração, 
 
 - **Visualização de Índices**: os índices existentes podem ser visualizados e gerenciados por meio da interface.
 
-Dessa forma, MongoDB e MongoDB Express são ferramentas complementares que simplificam a gestão do ambiente, permitindo que os desenvolvedores e administradores trabalhem de forma eficiente com dados dinâmicos em uma abordagem robusta e, ao mesmo tempo, flexível. 
+Dessa forma, MongoDB e MongoDB Express são ferramentas complementares que simplificam a gestão do ambiente, permitindo que os desenvolvedores e administradores trabalhem de forma eficiente com dados dinâmicos em uma abordagem robusta e, ao mesmo tempo, flexível. Mais à frente, veremos também a ferramenta oficial para GUI, que precisa ser instalada, o MongoDB Compass. 
 
 
 ## Lab 1: Configurando uma Aplicação com Atlas e Colab
 
+O **MongoDB Atlas** é a versão **Database as a Service (DBaaS)** do MongoDB.  
+Ele permite criar e administrar bancos MongoDB na nuvem sem precisar instalar ou manter servidores.
+
+Para utilizá-lo no **Google Colab**, siga os passos abaixo.
+
+### Criação da Conta e do Cluster
+
+1. Acesse `https://www.mongodb.com/atlas` 
+2. Crie uma conta (é possível usar login com Google).  
+3. Após entrar no painel, crie um **cluster**.
+
+### Configurações recomendadas para laboratório:
+
+- **Cluster Tier:** `M0 (Free)`
+- **Cloud Provider:** AWS, GCP ou Azure
+- **Region:** escolha uma próxima (ex.: `us-east-1`)
+- Clique em **Create Cluster**
+
+O cluster gratuito é suficiente para aulas, testes e protótipos.
+
+###  Criação do Usuário do Banco (Database User)
+
+Após criar o cluster, é necessário definir **quem pode acessar o banco**.
+
+1. No menu lateral, acesse **Database Access**.
+2. Clique em **Add New Database User**.
+3. Defina:
+   - **Username**
+   - **Password**
+4. Em **Built-in Role**, selecione:
+`Read and write to any database`
+
+Esse usuário será utilizado na **string de conexão**.
+
+### Liberação de IP (Network Access)
+
+O **Google Colab executa em servidores dinâmicos do Google**, portanto não sabemos previamente qual IP será utilizado.
+
+Por isso é necessário liberar acesso global temporariamente.
+
+1. No menu lateral, clique em **Network Access**.
+2. Clique em **Add IP Address**.
+3. Clique em **Allow Access From Anywhere**.
+
+Ou ainda, preencha com: `0.0.0.0/0` e clique em **Confirm**.
+
+>Nota de Segurança: o endereço 0.0.0.0/0 significa qualquer IP da Internet. Para laboratórios educacionais, isso é aceitável. Contudo, em ambientes de produção, o correto é liberar apenas os IPs dos servidores de aplicação efetivamente autorizados.
+
+### Obtendo a String de Conexão (URI)
+
+Agora precisamos da **URI de conexão** usada pelo PyMongo.
+
+1. No menu lateral, acesse **Database / Clusters**.
+2. Clique em **Connect**.
+3. Escolha **Drivers** ou **Connect your application**.
+4. Selecione:
+Driver: Python
+Version: 3.6+
+
+O Atlas mostrará uma string semelhante a:
+`mongodb+srv://<db_username>:<db_password>@cluster0.xxxx.mongodb.net/?retryWrites=true&w=majority`
+
+Substitua `<db_username>`, `<db_password>`e a identificação do cluster `xxxx`pelas credenciais criadas.  
+
+Exemplo: `mongodb+srv://usuario123:senha123@cluster0.xxxx.mongodb.net/?retryWrites=true&w=majority`
+
+Essa **URI será usada no PyMongo** para conectar o Google Colab ao MongoDB Atlas.
+
+### Implementação no Colab, usando PyMongo
 
 ```python
 # ----------------------------------------------------------
@@ -878,4 +947,5 @@ O [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) é a proposta de banco de
 ## Conclusão
 
 Esta documentação fornece uma visão geral acerca dos aspectos essenciais do MongoDB, uma das soluções mais populares e poderosas para gerenciamento e análise de dados no contexto de Big Data e NoSQL. Exploramos a flexibilidade de esquema do MongoDB, sua linguagem e recursos avançados de consulta (MQL) e agregação (MAF). Vimos que o MongoDB Express proporciona uma interface gráfica (GUI) amigável para gerenciamento de bases de dados MongoDB, tornando mais acessível o trabalho com documentos. Para aprofundar seu conhecimento, consulte a documentação oficial do [MongoDB](https://docs.mongodb.com/). 
+
 
