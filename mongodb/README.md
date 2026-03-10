@@ -75,13 +75,33 @@ O **MongoDB Express** é uma interface gráfica que facilita a administração, 
 
 Dessa forma, MongoDB e MongoDB Express são ferramentas complementares que simplificam a gestão do ambiente, permitindo que os desenvolvedores e administradores trabalhem de forma eficiente com dados dinâmicos em uma abordagem robusta e, ao mesmo tempo, flexível. Mais à frente, veremos também a ferramenta oficial para GUI, que precisa ser instalada, o MongoDB Compass. 
 
+## Lab 1: Configurando uma Aplicação com MongoDB Atlas e Google Colab
 
-## Lab 1: Configurando uma Aplicação com Atlas e Colab
+Em aplicações modernas baseadas em dados, normalmente temos pelo menos as três seguintes camadas principais:
 
-O **MongoDB Atlas** é a versão **Database as a Service (DBaaS)** do MongoDB.  
-Ele permite criar e administrar bancos MongoDB na nuvem sem precisar instalar ou manter servidores.
+1. **Camada de armazenamento** — onde os dados são persistidos (banco de dados)  
+2. **Camada de aplicação ou processamento** — onde scripts, APIs ou notebooks manipulam os dados  
+3. **Camada de acesso do usuário** — dashboards, aplicações web ou interfaces
 
-Para utilizá-lo no **Google Colab**, siga os passos abaixo.
+Neste laboratório vamos trabalhar com uma arquitetura simples:
+
+- **Banco de dados:** MongoDB hospedado na nuvem usando **MongoDB Atlas**
+- **Aplicação:** um **notebook Python executado no Google Colab**
+
+A ideia é que o banco esteja disponível na internet e que qualquer aplicação autorizada possa se conectar a ele — seja um notebook no Colab, um script Python local, uma API Flask ou uma aplicação hospedada em outra nuvem. Essa é exatamente a lógica de **DBaaS (Database as a Service)**.
+
+### O que é MongoDB Atlas
+
+O [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) é a plataforma oficial de banco de dados em nuvem da MongoDB Inc. Ele oferece um ambiente totalmente gerenciado para executar bancos MongoDB sem que o usuário precise instalar, configurar ou administrar servidores manualmente. Entre os principais recursos estão:
+
+- criação rápida de **clusters MongoDB na nuvem**
+- **backup automático**
+- **replicação e alta disponibilidade**
+- **monitoramento de desempenho**
+- **escalabilidade automática**
+- **controle de acesso por usuário e IP**
+
+Na prática, isso significa que o desenvolvedor ou cientista de dados pode focar na aplicação e na análise de dados, enquanto a infraestrutura do banco é administrada pela própria plataforma.
 
 ### Criação da Conta e do Cluster
 
@@ -942,11 +962,10 @@ Além do MongoDB Express, você também pode experimentar a ferramenta [MongoDB 
 
 O [Robo3T](https://robomongo.org/), anteriormente conhecido como Robomongo, é outra GUI para gerenciamento de bancos de dados MongoDB. Ela fornece uma interface intuitiva que permite criar, editar e consultar seus bancos de dados e também oferece recursos como autocompletar, formatação de consulta, suporte a múltiplas conexões e visualização de documentos BSON. 
 
-O [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) é a proposta de banco de dados como serviço (DBaaS - Database as a Service) fornecida pela MongoDB Inc. Oferece uma plataforma de nuvem para hospedar, gerenciar e dimensionar seus bancos de dados MongoDB. Ao implantar bancos de dados como serviço gerenciado, você facilita tarefas de administração, tais como backup e restauração de dados, configuração de alta disponibilidade, recursos de elasticidade (escalabilidade rápida e automática), monitoramento de desempenho e disponibilidade de seus clusters, e muito mais. 
-
 ## Conclusão
 
 Esta documentação fornece uma visão geral acerca dos aspectos essenciais do MongoDB, uma das soluções mais populares e poderosas para gerenciamento e análise de dados no contexto de Big Data e NoSQL. Exploramos a flexibilidade de esquema do MongoDB, sua linguagem e recursos avançados de consulta (MQL) e agregação (MAF). Vimos que o MongoDB Express proporciona uma interface gráfica (GUI) amigável para gerenciamento de bases de dados MongoDB, tornando mais acessível o trabalho com documentos. Para aprofundar seu conhecimento, consulte a documentação oficial do [MongoDB](https://docs.mongodb.com/). 
+
 
 
 
