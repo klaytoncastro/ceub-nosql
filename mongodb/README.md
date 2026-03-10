@@ -142,7 +142,7 @@ O Atlas mostrará uma string semelhante a:
 
 Substitua `<db_username>`, `<db_password>`e a identificação do cluster `xxxx`pelas credenciais criadas.  
 
-Exemplo: `mongodb+srv://usuario123:senha123@cluster0.xxxx.mongodb.net/?retryWrites=true&w=majority`
+Exemplo: `mongodb+srv://<db_username>:<db_password>@cluster0.<xxxx>.mongodb.net/?retryWrites=true&w=majority`
 
 Essa **URI será usada no PyMongo** para conectar o Google Colab ao MongoDB Atlas.
 
@@ -947,5 +947,6 @@ O [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) é a proposta de banco de
 ## Conclusão
 
 Esta documentação fornece uma visão geral acerca dos aspectos essenciais do MongoDB, uma das soluções mais populares e poderosas para gerenciamento e análise de dados no contexto de Big Data e NoSQL. Exploramos a flexibilidade de esquema do MongoDB, sua linguagem e recursos avançados de consulta (MQL) e agregação (MAF). Vimos que o MongoDB Express proporciona uma interface gráfica (GUI) amigável para gerenciamento de bases de dados MongoDB, tornando mais acessível o trabalho com documentos. Para aprofundar seu conhecimento, consulte a documentação oficial do [MongoDB](https://docs.mongodb.com/). 
+
 
 
