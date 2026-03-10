@@ -75,7 +75,258 @@ O **MongoDB Express** é uma interface gráfica que facilita a administração, 
 
 Dessa forma, MongoDB e MongoDB Express são ferramentas complementares que simplificam a gestão do ambiente, permitindo que os desenvolvedores e administradores trabalhem de forma eficiente com dados dinâmicos em uma abordagem robusta e, ao mesmo tempo, flexível. 
 
-## Configurando o Ambiente
+
+## Lab 1: Configurando uma Aplicação com Atlas e Colab
+
+
+```python
+# ----------------------------------------------------------
+# Instalação da biblioteca PyMongo
+# ----------------------------------------------------------
+# Execute no Google Colab:
+pip install pymongo[srv]
+```
+
+```python
+# ----------------------------------------------------------
+# Importação das bibliotecas necessárias
+# ----------------------------------------------------------
+from pymongo import MongoClient
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+```python
+# ----------------------------------------------------------
+# Conexão com MongoDB Atlas
+# ----------------------------------------------------------
+# Substitua pelas credenciais e informações do seu cluster Atlas
+uri = "mongodb+srv://<SEU_USUARIO_ATLAS>:<SUA_SENHA_ATLAS>@<SEU_CLUSTER_ATLAS>.mongodb.net/?retryWrites=true&w=majority"
+
+client = MongoClient(uri)
+
+# Teste de conectividade
+try:
+    client.admin.command("ping")
+    print("Conectado ao MongoDB com sucesso.")
+except Exception as e:
+    print("Erro na conexão:", e)
+```
+
+```python
+# ----------------------------------------------------------
+# Seleção ou criação do banco de dados
+# ----------------------------------------------------------
+db = client["AulaDemo"]
+```
+
+```python
+# ==========================================================
+# COLEÇÃO: ESTUDANTES
+# ==========================================================
+
+# Criação da coleção
+try:
+    db.create_collection("Estudantes")
+except:
+    pass  # Ignora erro caso já exista
+
+colecao = db["Estudantes"]
+```
+
+```python
+# ----------------------------------------------------------
+# Inserção de um documento
+# ----------------------------------------------------------
+colecao.insert_one({
+    "nome": "Fernando Campos",
+    "idade": 22,
+    "curso": "Engenharia da Computação",
+    "email": "fernando.campos@email.com"
+})
+```
+
+```python
+# ----------------------------------------------------------
+# Inserção de múltiplos documentos
+# ----------------------------------------------------------
+colecao.insert_many([
+    {
+        "nome": "Mariano Rodrigues",
+        "idade": 20,
+        "curso": "Design Gráfico"
+    },
+    {
+        "nome": "Roberta Lara",
+        "idade": 23,
+        "curso": "Ciência da Computação"
+    }
+])
+```
+
+```python
+# ----------------------------------------------------------
+# Consulta de todos os documentos
+# ----------------------------------------------------------
+print("\n--- Todos os estudantes ---")
+for doc in colecao.find():
+    print(doc)
+```
+
+```python
+# ----------------------------------------------------------
+# Consulta com filtro
+# ----------------------------------------------------------
+print("\n--- Estudantes de Engenharia da Computação ---")
+for doc in colecao.find({"curso": "Engenharia da Computação"}):
+    print(doc)
+```
+
+```python
+# ----------------------------------------------------------
+# Ordenação de resultados
+# ----------------------------------------------------------
+print("\n--- Estudantes ordenados por nome ---")
+for doc in colecao.find().sort("nome", 1):
+    print(doc)
+```
+
+```python
+# ----------------------------------------------------------
+# Limitação de resultados
+# ----------------------------------------------------------
+print("\n--- Limite de documentos ---")
+for doc in colecao.find().limit(4):
+    print(doc)
+```
+
+```python
+# ----------------------------------------------------------
+# Atualização de documento
+# ----------------------------------------------------------
+colecao.update_one(
+    {"nome": "Fernando Campos"},
+    {"$set": {"status": "Ativo"}}
+)
+```
+
+```python
+# ----------------------------------------------------------
+# Remoção de documento
+# ----------------------------------------------------------
+colecao.delete_one({"nome": "Roberta Lara"})
+```
+
+```python
+# ----------------------------------------------------------
+# Criação de índice
+# ----------------------------------------------------------
+colecao.create_index("nome")
+```
+
+```python
+# ----------------------------------------------------------
+# Aggregation Pipeline
+# Agrupa estudantes por curso
+# ----------------------------------------------------------
+pipeline = [
+    {"$group": {"_id": "$curso", "total": {"$sum": 1}}},
+    {"$sort": {"total": -1}}
+]
+
+print("\n--- Total de estudantes por curso ---")
+for doc in colecao.aggregate(pipeline):
+    print(doc)
+```
+
+```python
+# ----------------------------------------------------------
+# Conversão da coleção para DataFrame (análise)
+# ----------------------------------------------------------
+df_estudantes = pd.DataFrame(list(colecao.find()))
+print("\nDataFrame de estudantes:")
+print(df_estudantes)
+```
+
+```python
+# ==========================================================
+# COLEÇÃO: VENDAS
+# ==========================================================
+
+vendas = db["Vendas"]
+
+# ----------------------------------------------------------
+# Inserção de dados de exemplo
+# ----------------------------------------------------------
+vendas.insert_many([
+    {"produto": "Laptop", "categoria": "Eletrônicos", "valor": 1500},
+    {"produto": "Smartphone", "categoria": "Eletrônicos", "valor": 1800},
+    {"produto": "Televisor", "categoria": "Eletrônicos", "valor": 1700},
+    {"produto": "Tablet", "categoria": "Eletrônicos", "valor": 700},
+    {"produto": "Livros", "categoria": "Livraria", "valor": 400},
+    {"produto": "Cadeira", "categoria": "Móveis", "valor": 850},
+    {"produto": "Mesa", "categoria": "Móveis", "valor": 800},
+    {"produto": "Tênis", "categoria": "Esportes", "valor": 450},
+    {"produto": "Bicicleta", "categoria": "Esportes", "valor": 2200}
+])
+```
+
+```python
+# ----------------------------------------------------------
+# Pipeline de agregação
+# Receita total por categoria
+# ----------------------------------------------------------
+pipeline = [
+    {
+        "$group": {
+            "_id": "$categoria",
+            "receitaTotal": {"$sum": "$valor"}
+        }
+    },
+    {
+        "$sort": {"receitaTotal": -1}
+    }
+]
+
+resultado = list(vendas.aggregate(pipeline))
+
+print("\n--- Receita total por categoria ---")
+print(resultado)
+```
+
+```python
+# ----------------------------------------------------------
+# Conversão para DataFrame
+# ----------------------------------------------------------
+df = pd.DataFrame(resultado)
+df.columns = ["Categoria", "Receita Total"]
+
+print("\nDataFrame agregado:")
+print(df)
+```
+
+```python
+# ----------------------------------------------------------
+# Visualização gráfica
+# ----------------------------------------------------------
+plt.figure()
+
+df.plot(
+    x="Categoria",
+    y="Receita Total",
+    kind="bar"
+)
+
+plt.title("Receita Total por Categoria")
+plt.xlabel("Categoria")
+plt.ylabel("Receita Total")
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.show()
+```
+
+## Lab 2: Configurando o Ambiente (On-Premises)
 
 1. O dimensionamento apropriado de recursos depende das necessidades específicas do seu projeto. De modo a garantir um desempenho adequado e evitar problemas com os contêineres, ajuste a quantidade de memória nas configurações de Sistema na VM VirtualBox conforme orientações abaixo: 
 
@@ -627,3 +878,4 @@ O [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) é a proposta de banco de
 ## Conclusão
 
 Esta documentação fornece uma visão geral acerca dos aspectos essenciais do MongoDB, uma das soluções mais populares e poderosas para gerenciamento e análise de dados no contexto de Big Data e NoSQL. Exploramos a flexibilidade de esquema do MongoDB, sua linguagem e recursos avançados de consulta (MQL) e agregação (MAF). Vimos que o MongoDB Express proporciona uma interface gráfica (GUI) amigável para gerenciamento de bases de dados MongoDB, tornando mais acessível o trabalho com documentos. Para aprofundar seu conhecimento, consulte a documentação oficial do [MongoDB](https://docs.mongodb.com/). 
+
