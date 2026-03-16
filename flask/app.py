@@ -1,13 +1,12 @@
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
+from flasgger import Swagger
 import os
 
 app = Flask(__name__)
+Swagger(app)
 
-MONGO_URI = os.getenv(
-    "MONGO_URI",
-    "mongodb://root:mongo@mongo:27017"
-)
+MONGO_URI = "mongodb://root:mongo@mongo_service:27017"
 
 client = MongoClient(MONGO_URI)
 
@@ -17,14 +16,39 @@ colecao = db["Estudantes"]
 
 @app.route("/")
 def status():
+    """
+    Status da API
+    ---
+    responses:
+      200:
+        description: API online
+    """
     return {"status": "API MongoDB local online"}
 
 
 @app.route("/estudantes", methods=["POST"])
 def inserir_estudante():
+    """
+    Inserir estudante
+    ---
+    parameters:
+      - name: body
+        in: body
+        schema:
+          type: object
+          properties:
+            nome:
+              type: string
+            idade:
+              type: integer
+            curso:
+              type: string
+    responses:
+      200:
+        description: Estudante inserido
+    """
 
     data = request.json
-
     result = colecao.insert_one(data)
 
     return jsonify({
@@ -35,6 +59,13 @@ def inserir_estudante():
 
 @app.route("/estudantes", methods=["GET"])
 def listar_estudantes():
+    """
+    Listar estudantes
+    ---
+    responses:
+      200:
+        description: Lista de estudantes
+    """
 
     docs = []
 
@@ -45,27 +76,5 @@ def listar_estudantes():
     return jsonify(docs)
 
 
-@app.route("/estudantes/curso/<curso>", methods=["GET"])
-def buscar_por_curso(curso):
-
-    docs = []
-
-    for doc in colecao.find({"curso": curso}):
-        doc["_id"] = str(doc["_id"])
-        docs.append(doc)
-
-    return jsonify(docs)
-
-
-@app.route("/estudantes/<nome>", methods=["DELETE"])
-def deletar(nome):
-
-    result = colecao.delete_one({"nome": nome})
-
-    return jsonify({
-        "removidos": result.deleted_count
-    })
-
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
