@@ -444,6 +444,7 @@ Crie a rede virtual `mybridge` no Docker:
 
 ```bash
 docker network create --driver bridge mybridge
+```
 
 4. Execute os contêineres do MongoDB e MongoDB Express: 
 
