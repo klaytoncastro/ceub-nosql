@@ -168,6 +168,72 @@ A imagem OVA fornecida já vem equipada com ferramentas como `docker`, `docker-c
 - **Usuário:** labihc
 - **Senha:** L@b1hc
 
+### Opcional: Definindo o Acesso Seguro via Troca de Chaves (SSH) 
+
+Para evitar a digitação de senhas no acesso ao servidor, configure assim o SSH Remote no seu VS Code: 
+
+```bash
+# Read more about SSH config files: https://linux.die.net/man/5/ssh_config
+Host labihc
+    HostName localhost
+    Port 2222
+    User labihc
+    IdentityFile C:/Users/<seu_usuario>/.ssh/id_rsa
+    IdentitiesOnly yes
+```
+
+No terminal do Windows, realize os seguintes passos: 
+
+```powershell
+# Windows
+ssh-keygen -t rsa
+scp -P 2222 .\.ssh\id_rsa.pub labihc@localhost:/tmp
+ssh -p 2222 labihc@localhost
+```
+
+No terminal do Linux, realize os seguintes passos: 
+
+```bash
+# Linux
+mkdir -p ~/.ssh
+cat /tmp/id_rsa.pub >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+chmod 700 ~/.ssh
+```
+
+Volte ao terminal Windows e teste a conexão: 
+
+```powershell
+ssh -i .\.ssh\id_rsa -p 2222 labihc@localhost
+```
+
+Agora no VS Code, abra o SSH Remote conforme instruções do Professor, clone o repositório da disciplina no diretório `/opt/` e dê permissão de `owner` ao usuário `labihc`:
+
+```bash
+sudo su
+cd /opt
+git clone https://github.com/klaytoncastro/ceub-siscom
+chown -R labihc.labihc ./ceub-siscom
+```
+
+Para que o usuário `labihc` possa executar o comando `sudo su` e se tornar `root`, ou para executar qualquer comando elevado no terminal, sem inserir senha, edite o arquivo `/etc/sudoers` com o `vim`, conforme abaixo: 
+
+```bash
+#Eleve seu usuário a root e insira a senha
+sudo su
+
+#Edite o arquivo 
+vim /etc/sudoers
+```
+
+Pressione `INSERT` e vá para a última linha do arquivo. Insira a seguinte configuração: 
+
+```bash
+labihc ALL=(ALL) NOPASSWD: ALL
+```
+
+Agora salve, pressionando `ESC` e digitando `:x` ou `:wq!`
+
 ### 3.2. Compreendendo o modo NAT
 
 NAT (_Network Address Translation_) é a implementação de um recurso para tradução de endereços de rede. No contexto do VirtualBox, ao configurar uma VM para usar NAT, você está permitindo que essa VM se comunique com redes externas, incluindo a Internet, usando o mesmo endereço IP (_Internet Protocol_) do host. Assim, a máquina _host_ (seu _desktop_ de laboratório ou _notebook_ pessoal) age como um _gateway_ e a VM parece estar atrás de uma rede privada.
