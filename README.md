@@ -265,7 +265,7 @@ Além de fornecer acesso à Internet, o recurso de NAT do VirtualBox também per
 
 ### 3.3. Descrição das Ferramentas Utilizadas
 
-No cenário atual de Big Data, é evidente a necessidade de plataformas integradas que consigam gerenciar, processar e analisar grandes volumes de dados de diversas fontes. A ideia de um Data Lake ou Data Lakehouse é central para essa abordagem, onde os dados são armazenados em sua forma bruta e processados conforme a necessidade, em vez de serem pré-processados em silos de dados. A combinação de ferramentas como Spark, Hadoop, e bancos de dados NoSQL, numa infraestrutura orquestrada pelo Docker e Docker Compose, pode ser vista como uma representação básica de uma plataforma Data Lakehouse, que visa otimizar o fluxo de dados, desde a ingestão até a análise. 
+No cenário atual de Big Data e NoSQL, é evidente a necessidade de plataformas integradas que consigam gerenciar, processar e analisar grandes volumes de dados de diversas fontes. A ideia de um Data Lake ou Data Lakehouse, onde os dados são armazenados em sua forma bruta e processados conforme a necessidade, em vez de serem pré-processados em silos de dados é hoje a estratégia mais moderna. Assim, a combinação de ferramentas como Spark com Delta Lake e bancos de dados NoSQL, numa infraestrutura orquestrada pelo Docker e Docker Compose, pode ser vista como uma representação básica de uma plataforma Data Lakehouse, que visa otimizar o fluxo de dados, desde a ingestão até a análise. 
 
 Diante da quantidade de informações e ferramentas envolvidas, é natural temer essa certa complexidade inicial. No entanto, o objetivo não é dominar de imediato todas as técnicas e tecnologias envolvidas, mas proporcionar uma clara compreensão dos conceitos fundamentais e apresentar ferramentas fundamentais no panorama atual da indústria em se tratando de engenharia e ciência de dados. Não se preocupe, cada tópico será abordado de forma gradual, garantindo o suporte necessário e o esclarecimento de dúvidas ao longo do processo de aprendizagem. Com dedicação e tempo, essa complexidade inicial dará lugar a uma compreensão cada vez mais profunda e intuitiva. A seguir, apresentamos um diagrama que representa a arquitetura de referência da plataforma que estamos construindo: 
 
@@ -273,17 +273,11 @@ Diante da quantidade de informações e ferramentas envolvidas, é natural temer
 
 Dentro deste projeto, temos diversos diretórios, cada um representando um ambiente específico:
 
-### Jupyter/Spark
-Neste diretório, você encontrará o ambiente com Jupyter Notebook e Spark. 
-
-- **Jupyter Notebook**: É uma aplicação web que permite criar e compartilhar documentos que contêm código ativo, equações, visualizações e texto. Muito usado para análise de dados.
+### Jupyter
+Neste diretório, você encontrará o ambiente com Jupyter, uma aplicação web que permite criar e compartilhar documentos que contêm código ativo, equações, visualizações e texto. Muito usado para análise de dados.
   
-- **Spark**: Um framework de processamento de dados rápido, baseado em memória, muito utilizado atualmente para big data analytics.
-
-### Hadoop
-Neste diretório, você encontrará o ambiente para o ecossistema Hadoop. 
-
-- **Hadoop**: Um framework de código aberto para armazenamento distribuído e processamento de conjuntos de big data, usando o modelo de programação MapReduce.
+### Spark
+Um framework de processamento de dados rápido, baseado em memória, muito utilizado atualmente para big data analytics.
 
 ### MongoDB
 Neste diretório, você encontrará o ambiente para o MongoDB.
