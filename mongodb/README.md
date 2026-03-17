@@ -429,8 +429,7 @@ plt.show()
 
 ```bash
 cd /opt
-git clone origin main
-docker network create --driver bridge mybridge
+git clone https://github.com/klaytoncastro/ceub-nosql
 ```
 
 3. Se este for seu primeiro acesso, vá até o diretório `/opt/ceub-nosql/mongodb` e certifique-se que o script `wait-for-it.sh` tenha permissão de execução: 
