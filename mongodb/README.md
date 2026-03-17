@@ -432,7 +432,13 @@ cd /opt
 git clone https://github.com/klaytoncastro/ceub-nosql
 ```
 
-3. Se este for seu primeiro acesso, vá até o diretório `/opt/ceub-nosql/mongodb` e certifique-se que o script `wait-for-it.sh` tenha permissão de execução: 
+Ou, se não for o primeiro acesso, execute o comando abaixo para obter as últimas atualizações:
+
+```bash
+git pull
+```
+
+3. Se este for seu primeiro acesso, vá até o diretório `/opt/ceub-nosql/mongodb` e certifique-se que o script `wait-for-it.sh` tenha permissão de execução:
 
 ```bash
 cd /opt/ceub-nosql/mongodb
