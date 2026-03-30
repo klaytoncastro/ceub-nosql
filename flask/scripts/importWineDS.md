@@ -1,0 +1,1 @@
+docker exec -it mongo_service mongoimport --db machinelearning --collection winequality --type csv --file /datasets/winequality-merged.csv --headerline --ignoreBlanks --username root --password mongo --authenticationDatabase admin

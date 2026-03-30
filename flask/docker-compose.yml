@@ -11,7 +11,7 @@ services:
       - ./app.py:/app/app.py
       - ./templates:/app/templates
       - ./static:/app/static
-
+      - ./models:/app/models  # Mapeia a pasta models
     networks:
       - mybridge
 
