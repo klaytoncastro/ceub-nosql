@@ -10,8 +10,8 @@ Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big 
 
 | Atividade        | Desafio  | Prazo      |
 |------------------|----------|------------|
-| [01](./mongodb/) | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 07/04/2025 |
-| [02](./flask/)   | Desenvolvimento de API com persistência em SGBD orientado a documentos | 07/04/2025 |
+| [01](./mongodb/) | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 07/04/2026 |
+| [02](./flask/)   | Desenvolvimento de API com persistência em SGBD orientado a documentos | 07/04/2026 |
 | [03](./mlops/)   | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 07/04/2025 |
 
 
