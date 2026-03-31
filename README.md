@@ -6,6 +6,20 @@ Olá, estudante! Seja bem-vindo aos laboratórios da disciplina de **Bancos de D
 
 Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big Data por meio de desafios práticos. Cada desafio proporcionará uma experiência aplicada, permitindo que você consolide os conhecimentos adquiridos e aprofunde seu aprendizado de maneira progressiva. Durante essa jornada, você terá contato com ferramentas amplamente utilizadas no mercado e empregará técnicas para resolver problemas reais.
 
+<!--
+
+| Atividade        | Desafio  | Prazo      |
+|------------------|----------|------------|
+| [01](./mongodb/) | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 07/04/2025 |
+| [02](./flask/)   | Desenvolvimento de API com persistência em SGBD orientado a documentos | 07/04/2025 |
+| [03](./mlops/)   | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 07/04/2025 |
+
+
+
+<!--
+| [05](./cassandra/)                                                                   | Modelagem e consulta eficiente em bases distribuídas                     | 26/09/2025 |
+| 06 | [Redis](./redis/)                                                                    | Prática com Banco de Dados Chave-Valor                     | 02/04/2025 |
+-->
 
 ## 2. Infraestrutura dos Laboratórios
 
