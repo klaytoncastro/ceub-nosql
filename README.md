@@ -6,7 +6,7 @@ Olá, estudante! Seja bem-vindo aos laboratórios da disciplina de **Bancos de D
 
 Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big Data por meio de desafios práticos. Cada desafio proporcionará uma experiência aplicada, permitindo que você consolide os conhecimentos adquiridos e aprofunde seu aprendizado de maneira progressiva. Durante essa jornada, você terá contato com ferramentas amplamente utilizadas no mercado e empregará técnicas para resolver problemas reais.
 
-<!--
+
 
 | Atividade        | Desafio  | Prazo      |
 |------------------|----------|------------|
