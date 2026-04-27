@@ -29,7 +29,7 @@ Finalmente, um pipeline de avaliação contínua é recomendável para garantir 
 Nesta etapa, os conceitos de MLOps serão apresentados de forma introdutória, sendo aprofundados conforme a evolução da arquitetura.
 
 
-## 3. Primeiro Passo: Exportação do Modelo Treinado
+## 3. Exportação do Modelo Treinado
 
 Uma etapa crucial na implementação de um modelo de ML em produção é a exportação do modelo treinado para um formato que possa ser facilmente carregado e utilizado por aplicações. Geralmente optamos pelo uso do formato `pickle` para realizar essa tarefa. O formato `pickle` oferece uma maneira padrão para serializar objetos em Python. Isso significa que ele pode transformar qualquer objeto Python, incluindo modelos complexos de Machine Learning, em uma sequência de bytes que pode ser salva em um arquivo.
 
@@ -56,6 +56,8 @@ with open('model.pkl', 'wb') as file:
     pickle.dump(model, file)
 
 ```
+
+## 4. Serviço de Inferência
 
 O componente desenvolvido neste laboratório é conhecido como Model Serving Layer, responsável por disponibilizar o modelo treinado para consumo via API. Para utilizar o modelo em nossa aplicação Flask, simplesmente carregamos o arquivo pickle, deserializamos o objeto e utilizamos para fazer previsões:
 
@@ -126,8 +128,7 @@ curl -X POST -H "Content-Type: application/json" -d @ruim.json http://localhost:
 
 - Outra forma de testar a API é com o Swagger (rota `/apidocs`) uma extensão como o Postman, diretamente em seu navegador, para fazer as vezes do `curl` mas com uma interface gráfica. 
 
-
-## Pipeline de Inferência
+## 5. Pipeline de Inferência
 
 Neste laboratório, o objetivo é estruturar um pipeline completo orientado a dados, no qual uma aplicação web interage com um banco NoSQL e evolui para suportar inferência de modelos de Machine Learning em produção. A arquitetura proposta combina três elementos centrais:
 
@@ -149,8 +150,6 @@ Ou seja:
 - a API processa
 - o modelo gera uma previsão
 - o resultado é armazenado junto ao documento, transformando-o em um repositório de dados enriquecidos.
-
-
 
 ### Dataset 
 
