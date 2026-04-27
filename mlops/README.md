@@ -195,23 +195,23 @@ Assim, a API evolui de um serviço HTTP e passa a representar um componente de u
 
 ```mermaid
 flowchart LR
-    A[Actor / Cliente] -->|HTTP POST /predict<br>JSON com atributos do vinho| API[Flask Web API<br>/predict]
+    A[Actor / Cliente] -->|HTTP POST /predict<br/>JSON com atributos do vinho| API[Flask Web API<br/>/predict]
 
-    API --> H[Gerar chave da requisição<br>hash do JSON normalizado]
+    API --> H[Gerar chave da requisição<br/>hash do JSON normalizado]
 
-    H --> R[(Redis<br>Cache)]
+    H --> R[(Redis<br/>Cache)]
 
-    R --> D{Predição<br>existe no cache?}
+    R --> D{Predição existe no cache?}
 
-    D -->|Sim<br>cache hit| C[Recuperar predição<br>do Redis]
+    D -->|Sim: cache hit| C[Recuperar predição do Redis]
 
-    D -->|Não<br>cache miss| M[Modelo ML<br>pickle / joblib<br>.pkl]
+    D -->|Não: cache miss| M[Modelo ML<br/>pickle / joblib<br/>.pkl]
 
-    M --> P[Executar inferência<br>model.predict]
+    M --> P[Executar inferência<br/>model.predict]
 
-    P --> S[Salvar predição no Redis<br>chave = hash<br>valor = resultado<br>TTL opcional]
+    P --> S[Salvar predição no Redis<br/>chave = hash<br/>valor = resultado<br/>TTL opcional]
 
-    C --> RESP[HTTP Response<br>{ "prediction": "Bom" }]
+    C --> RESP[HTTP Response<br/>prediction: Bom]
     S --> RESP
 
     RESP --> A
