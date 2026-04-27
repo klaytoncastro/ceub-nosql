@@ -217,6 +217,173 @@ flowchart LR
     RESP --> A
 ```
 
+
+```python
+from flask import Flask, request, jsonify
+from flasgger import Swagger
+from joblib import load
+import os
+import json
+import redis
+import hashlib
+
+app = Flask(__name__)
+
+app.config['SWAGGER'] = {
+    'title': 'API de Previsão com Redis',
+    'version': '1.0.0',
+    'description': 'API para importação e previsão de qualidade de vinhos'
+}
+Swagger(app)
+
+r = redis.Redis(host='redis', port=6379, decode_responses=True)
+
+MODEL_VERSION = "v1"
+CACHE_TTL_SECONDS = 86400  # 24 horas
+
+modelo_path = os.path.join('models', 'modelo_v1.pkl')
+modelo = load(modelo_path)
+
+campos_obrigatorios = [
+    'fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar',
+    'chlorides', 'free sulfur dioxide', 'total sulfur dioxide',
+    'density', 'pH', 'sulphates', 'alcohol', 'color'
+]
+
+
+def gerar_chave(dados):
+    conteudo = json.dumps(
+        dados,
+        sort_keys=True,
+        separators=(',', ':')
+    )
+
+    hash_entrada = hashlib.md5(conteudo.encode()).hexdigest()
+
+    return f"wine:prediction:{MODEL_VERSION}:{hash_entrada}"
+
+
+def executar_predicao(dados):
+    valores = [dados[campo] for campo in campos_obrigatorios]
+    predicao = modelo.predict([valores])[0]
+
+    return 'ruim' if predicao == 1 else 'bom'
+
+
+@app.route('/import', methods=['POST'])
+def import_data():
+    try:
+        vinhos = request.get_json()
+
+        if not isinstance(vinhos, list):
+            return jsonify({
+                "error": "Payload inválido",
+                "message": "O endpoint /import espera uma lista de vinhos."
+            }), 400
+
+        total_recebidos = len(vinhos)
+        total_processados = 0
+        total_cache_existente = 0
+
+        for vinho in vinhos:
+            chave = gerar_chave(vinho)
+
+            cache = r.get(chave)
+
+            if cache is not None:
+                total_cache_existente += 1
+                continue
+
+            resultado = executar_predicao(vinho)
+
+            resposta_cache = {
+                "prediction": resultado,
+                "model_version": MODEL_VERSION
+            }
+
+            r.setex(
+                chave,
+                CACHE_TTL_SECONDS,
+                json.dumps(resposta_cache)
+            )
+
+            total_processados += 1
+
+        return jsonify({
+            "msg": "Importação concluída",
+            "total_received": total_recebidos,
+            "total_processed": total_processados,
+            "total_already_cached": total_cache_existente,
+            "model_version": MODEL_VERSION,
+            "cache_ttl_seconds": CACHE_TTL_SECONDS
+        }), 200
+
+    except KeyError as e:
+        return jsonify({
+            "error": "Campo obrigatório ausente",
+            "missing_field": str(e)
+        }), 400
+
+    except Exception as e:
+        return jsonify({
+            "error": "Erro interno no servidor",
+            "detail": str(e)
+        }), 500
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data = request.get_json()
+        chave = gerar_chave(data)
+
+        cache = r.get(chave)
+
+        if cache is not None:
+            resposta = json.loads(cache)
+            resposta["source"] = "cache"
+            return jsonify(resposta), 200
+
+        resultado = executar_predicao(data)
+
+        resposta = {
+            "prediction": resultado,
+            "source": "model",
+            "model_version": MODEL_VERSION
+        }
+
+        resposta_cache = {
+            "prediction": resultado,
+            "model_version": MODEL_VERSION
+        }
+
+        r.setex(
+            chave,
+            CACHE_TTL_SECONDS,
+            json.dumps(resposta_cache)
+        )
+
+        return jsonify(resposta), 200
+
+    except KeyError as e:
+        return jsonify({
+            "error": "Campo obrigatório ausente",
+            "missing_field": str(e)
+        }), 400
+
+    except Exception as e:
+        return jsonify({
+            "error": "Erro interno no servidor",
+            "detail": str(e)
+        }), 500
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+```
+
+
+
 ## Tarefa: Coloque outro modelo de ML em Produção
 
 ### Objetivo
