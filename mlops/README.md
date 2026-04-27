@@ -190,6 +190,33 @@ Assim, a API evolui de um serviço HTTP e passa a representar um componente de u
 - registro de predições permite auditoria e análise posterior
 - preparação para monitoramento (drift, métricas, etc.)
 
+
+### Exemplo de arquitetura com cache
+
+```mermaid
+flowchart LR
+    A[Actor / Cliente] -->|HTTP POST /predict<br>JSON com atributos do vinho| API[Flask Web API<br>/predict]
+
+    API --> H[Gerar chave da requisição<br>hash do JSON normalizado]
+
+    H --> R[(Redis<br>Cache)]
+
+    R --> D{Predição<br>existe no cache?}
+
+    D -->|Sim<br>cache hit| C[Recuperar predição<br>do Redis]
+
+    D -->|Não<br>cache miss| M[Modelo ML<br>pickle / joblib<br>.pkl]
+
+    M --> P[Executar inferência<br>model.predict]
+
+    P --> S[Salvar predição no Redis<br>chave = hash<br>valor = resultado<br>TTL opcional]
+
+    C --> RESP[HTTP Response<br>{ "prediction": "Bom" }]
+    S --> RESP
+
+    RESP --> A
+```
+
 ## Tarefa: Coloque outro modelo de ML em Produção
 
 ### Objetivo
