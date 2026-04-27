@@ -237,7 +237,7 @@ flowchart LR
     RESP --> A
 ```
 
-Exemplo de implementação com Redis: 
+### Exemplo de implementação com Redis: 
 
 ```python
 from flask import Flask, request, jsonify
@@ -403,7 +403,7 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 ```
 
-Importação de Amostras
+### Importação de Amostras
 
 ```shell
 # Carregamento de 03 amostras
@@ -455,7 +455,7 @@ curl -X POST "http://localhost:5000/import" \
   ]'
 ```
 
-Comando para o teste:
+### Comando para o teste:
 
 ```bash
 curl -X POST "http://localhost:5000/predict" \
