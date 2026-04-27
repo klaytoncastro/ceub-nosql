@@ -124,7 +124,7 @@ curl -X POST -H "Content-Type: application/json" -d @bom.json http://localhost:5
 curl -X POST -H "Content-Type: application/json" -d @ruim.json http://localhost:5000/predict
 ```
 
-- Outra forma de testar a API é com uma extensão como o Postman, diretamente em seu navegador, para fazer as vezes do `curl` mas com uma interface gráfica. 
+- Outra forma de testar a API é com o Swagger (rota `/apidocs`) uma extensão como o Postman, diretamente em seu navegador, para fazer as vezes do `curl` mas com uma interface gráfica. 
 
 
 ## Pipeline de Inferência
@@ -193,7 +193,7 @@ Ou, para cenários mais completos:
   "timestamp": "2026-03-30T12:00:00Z"
 }
 
-Isso introduz conceitos fundamentais:
+Isso insere alguns conceitos fundamentais em MLOps:
 
 - persistência de inferência
 - rastreabilidade de decisões
