@@ -217,6 +217,7 @@ flowchart LR
     RESP --> A
 ```
 
+Exemplo de implementação com Redis: 
 
 ```python
 from flask import Flask, request, jsonify
@@ -381,6 +382,8 @@ def predict():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 ```
+
+Importação de Amostras
 
 ```shell
 # Carregamento de 03 amostras
