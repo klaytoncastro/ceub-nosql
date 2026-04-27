@@ -382,6 +382,77 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 ```
 
+```shell
+# Carregamento de 03 amostras
+curl -X POST "http://localhost:5000/import" \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "fixed acidity": 7,
+      "volatile acidity": 0.27,
+      "citric acid": 0.36,
+      "residual sugar": 20.7,
+      "chlorides": 0.045,
+      "free sulfur dioxide": 45,
+      "total sulfur dioxide": 170,
+      "density": 1.001,
+      "pH": 3,
+      "sulphates": 0.45,
+      "alcohol": 8.8,
+      "color": 0
+    },
+    {
+      "fixed acidity": 6.3,
+      "volatile acidity": 0.3,
+      "citric acid": 0.34,
+      "residual sugar": 1.6,
+      "chlorides": 0.049,
+      "free sulfur dioxide": 14,
+      "total sulfur dioxide": 132,
+      "density": 0.994,
+      "pH": 3.3,
+      "sulphates": 0.49,
+      "alcohol": 9.5,
+      "color": 0
+    },
+    {
+      "fixed acidity": 8.1,
+      "volatile acidity": 0.28,
+      "citric acid": 0.4,
+      "residual sugar": 6.9,
+      "chlorides": 0.05,
+      "free sulfur dioxide": 30,
+      "total sulfur dioxide": 97,
+      "density": 0.9951,
+      "pH": 3.26,
+      "sulphates": 0.44,
+      "alcohol": 10.1,
+      "color": 0
+    }
+  ]'
+```
+
+Comando para o teste:
+
+```bash
+curl -X POST "http://localhost:5000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fixed acidity": 7,
+    "volatile acidity": 0.27,
+    "citric acid": 0.36,
+    "residual sugar": 20.7,
+    "chlorides": 0.045,
+    "free sulfur dioxide": 45,
+    "total sulfur dioxide": 170,
+    "density": 1.001,
+    "pH": 3,
+    "sulphates": 0.45,
+    "alcohol": 8.8,
+    "color": 0
+  }'
+```
+
 
 
 ## Tarefa: Coloque outro modelo de ML em Produção
