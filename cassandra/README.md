@@ -627,6 +627,8 @@ finally:
 
 Esta documentação fornece uma visão geral dos aspectos essenciais do Apache Cassandra, um sistema de gerenciamento de banco de dados NoSQL colunar robusto e escalável. Exploramos métodos de importação de dados, backup e restauração, bem como outras ferramentas para administração de dados.
 
+Comandos adicionais podem ser consultados no [guia de referência CQL](https://docs.datastax.com/en/cql/hcd/reference/cql-quick-reference.html)
+
 Além das ferramentas de linha de comando, existem diversas ferramentas gráficas e serviços gerenciados que podem facilitar a administração e interação com o Apache Cassandra:
 
 - DataStax DevCenter: Interface gráfica (GUI) que permite criar, editar e consultar dados no Cassandra de forma visual e intuitiva.
