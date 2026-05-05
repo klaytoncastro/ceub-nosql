@@ -475,6 +475,36 @@ curl -X POST "http://localhost:5000/predict" \
   }'
 ```
 
+### Exemplo de Retorno: 
+
+```bash
+# Faça um POST
+curl -X POST "http://localhost:5000/import" -H "Content-Type: application/json" -d '[{"fixed acidity":6.6,"volatile acidity":0.16,"citric acid":0.4,"residual sugar":1.5,"chlorides":0.044,"free sulfur dioxide":48.0,"total sulfur dioxide":143.0,"density":0.9912,"pH":3.54,"sulphates":0.52,"alcohol":12.4,"color":1}]'
+
+# Observe a resposta da API e a fonte da informação (Cache ou Modelo?)
+{
+  "cache_ttl_seconds": 86400,
+  "model_version": "v1",
+  "msg": "Importa\u00e7\u00e3o conclu\u00edda",
+  "total_already_cached": 0,
+  "total_processed": 1,
+  "total_received": 1
+}
+
+# Repita o POST
+curl -X POST "http://localhost:5000/import" -H "Content-Type: application/json" -d '[{"fixed acidity":6.6,"volatile acidity":0.16,"citric acid":0.4,"residual sugar":1.5,"chlorides":0.044,"free sulfur dioxide":48.0,"total sulfur dioxide":143.0,"density":0.9912,"pH":3.54,"sulphates":0.52,"alcohol":12.4,"color":1}]'
+
+# Observe a resposta da API e a fonte da informação (Cache ou Modelo?)
+{
+  "cache_ttl_seconds": 86400,
+  "model_version": "v1",
+  "msg": "Importa\u00e7\u00e3o conclu\u00edda",
+  "total_already_cached": 1,
+  "total_processed": 0,
+  "total_received": 1
+}
+```
+
 >Em uma arquitetura completa, Redis atua como cache de baixa latência, enquanto MongoDB pode armazenar o histórico das requisições, predições, versões do modelo e resultados reais para auditoria e monitoramento.
 
 ## Tarefa: Coloque outro modelo de ML em Produção
