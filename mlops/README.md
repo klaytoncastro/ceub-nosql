@@ -505,7 +505,7 @@ curl -X POST "http://localhost:5000/import" -H "Content-Type: application/json" 
 }
 ```
 
->Em uma arquitetura completa, Redis atua como cache de baixa latência, enquanto MongoDB pode armazenar o histórico das requisições, predições, versões do modelo e resultados reais para auditoria e monitoramento.
+>Em uma arquitetura completa, Redis atua como cache de baixa latência, enquanto MongoDB ou outro Banco de Dados pode armazenar o histórico das requisições, predições, versões do modelo e resultados reais para auditoria e monitoramento. No exemplo acima, o Redis evita consultar o arquivo do modelo previamente treinado, acelerando a aplicação de machine learning. 
 
 ## Tarefa: Coloque outro modelo de ML em Produção
 
