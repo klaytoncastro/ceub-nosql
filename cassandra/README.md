@@ -444,11 +444,11 @@ Em seguida, você pode usar o `sstableloader` para restaurar dados a partir de u
 
 ### Desafio 3 - Importação de Dados no Cassandra usando `cqlsh`
 
-Reproduza a **mesma análise de dados** feita anteriormente no MongoDB, agora usando **Apache Cassandra**.  
+Realizamos no passado, utilizando MongoDB, a análise do [Censo das Instituições do Brasil 2022](https://github.com/klaytoncastro/ceub-bigdata/tree/main/jupyter#4-limpeza-prepara%C3%A7%C3%A3o-e-importa%C3%A7%C3%A3o-de-dados-reais), realizado pelo INEP/MEC. 
+
+Reproduza a **mesma análise de dados** feita anteriormente no MongoDB, agora usando **Apache Cassandra**. Compare as abordagens e diferenças entre as ferramentas MongoDB e Cassandra. 
 
 **Dica:** Você precisa definir um volume para associar o diretório onde se encontram os datasets em sua máquina e referenciá-los no contêiner.
-
-<!-- RESPOSTAS
 
 ### Importando o CSV para o Cassandra
 ```bash
@@ -620,8 +620,6 @@ try:
 finally:
     close_connection(session, cluster)
 ```
-
--->
 
 ## 4. Considerações Finais
 
