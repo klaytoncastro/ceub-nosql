@@ -407,11 +407,10 @@ SELECT * FROM TestePersistencia.usuarios;
 
 **Dica:** Compare os arquivos `docker-compose.yml` do MongoDB e Cassandra.
 
-<!-- RESPOSTAS:
 > Os dados foram perdidos porque em nosso ambiente, tanto o Cassandra, quanto outros SGBD (SQL ou NoSQL), não irão persistir dados se não houver um volume montado no Docker. O Cassandra armazena dados no diretório `/var/lib/cassandra`, mas sem um volume persistente, esse diretório é recriado ao reiniciar o contêiner. Você pode criar um volume Docker persistente montando-o em `/var/lib/cassandra`. 
--->
 
-### Atividade 2: Administração do Ambiente
+
+### Administração do Ambiente
 
 - O Cassandra oferece métodos para importar dados de fontes externas para suas tabelas. Um dos mais práticos e usuais é utilizar o próprio CQL Shell. Você pode usar a ferramenta de administração `cqlsh` para executar instruções CQL (Cassandra Query Language) e, assim, inserir dados em suas tabelas a partir de arquivos externos, como `CSV` ou outros formatos. Exemplo de uso:
 
