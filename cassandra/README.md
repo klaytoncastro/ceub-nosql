@@ -713,7 +713,7 @@ Para o Nó 2 (192.168.100.102):
 sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.102/24 EOF
 ```
 
-Ajuste o `docker-compose.yml`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
+Ajuste o `docker-compose.yml` com o `container_name: cassandra-node2`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
 
 ```bash
 
@@ -731,7 +731,7 @@ Para o Nó 3 (192.168.100.103):
 sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.103/24 EOF 
 ```
 
-Ajuste o `docker-compose.yml`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
+Ajuste o `docker-compose.yml` com o `container_name: cassandra-node3`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
 
 ```bash
 # Ajuste as variáveis, o resto permanece igual ao Nó 1
@@ -756,6 +756,26 @@ A partir do nó 2
 ping 192.168.100.101
 ping 192.168.100.103
 ```
+
+A partir do nó 1, veja a saúde do cluster:
+
+```bash
+docker exec -it cassandra-node1 nodetool status
+```
+
+O esperado é: 
+
+```bash
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address          Load        Tokens  Owns (effective)  Host ID                               Rack 
+UN  192.168.100.103  104.31 KiB  16      59.3%             2f07e3cd-102b-4269-823b-17329f0bdb52  rack1
+UN  192.168.100.101  122.29 KiB  16      64.7%             d58fbe02-ade5-4970-8d37-387e9c88c76c  rack1
+DN  192.168.100.102  84.56 KiB   16      76.0%             12cc5a2c-fccd-429a-8c64-e8c9772b7f86  rack1
+```
+
 
 ## 4. Considerações Finais
 
