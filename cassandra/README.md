@@ -620,6 +620,132 @@ finally:
     close_connection(session, cluster)
 ```
 
+## 5. Configuração do Ambiente em Cluster
+
+
+
+### Nó 1
+
+Para o Nó 1 (192.168.100.101): 
+
+```bash
+sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.101/24 EOF
+```
+
+- `[Match]` informa que a regra se aplica à interface `enp0s8`.
+- `[Network]` define o IP estático com máscara `/24`.
+- Não atribuímos Gateway nem DNS, porque essa interface é apenas interna.
+
+Ativar e reiniciar o serviço de rede: 
+
+```bash
+
+sudo systemctl restart systemd-networkd
+sudo systemctl status systemd-networkd
+
+#Levantar a interface manualmente. Confirme com:
+ip link set enp0s8 up
+
+#Depois veja se o IP está atribuído:
+ip a show enp0s8
+```
+
+Ajuste o `docker-compose.yml`: 
+
+```bash
+version: "3.3"
+
+services:
+  cassandra:
+    image: cassandra:4.1
+    container_name: cassandra-node1
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      CASSANDRA_CLUSTER_NAME: "Test Cluster"
+      CASSANDRA_SEEDS: "192.168.100.101"
+      CASSANDRA_LISTEN_ADDRESS: "192.168.100.101"
+      CASSANDRA_BROADCAST_ADDRESS: "192.168.100.101"
+      CASSANDRA_RPC_ADDRESS: "192.168.100.101"
+      CASSANDRA_BROADCAST_RPC_ADDRESS: "192.168.100.101"
+      CASSANDRA_ENDPOINT_SNITCH: "GossipingPropertyFileSnitch"
+      CASSANDRA_DC: "datacenter1"
+      CASSANDRA_RACK: "rack1"
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+      - ./datasets:/datasets
+
+  cassandra-web:
+    image: ipushc/cassandra-web
+    container_name: cassandra-web-container
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      - ./wait-for-it.sh:/wait-for-it.sh
+    environment:
+      HOST_PORT: ":80"
+      READ_ONLY: "false"
+      CASSANDRA_HOST: "192.168.100.101"
+      CASSANDRA_PORT: "9042"
+      CASSANDRA_USERNAME: "cassandra"
+      CASSANDRA_PASSWORD: "cassandra"
+    command:
+      [
+        "/wait-for-it.sh",
+        "192.168.100.101:9042",
+        "--",
+        "./service",
+        "-c",
+        "config.yaml"
+      ]
+    depends_on:
+      - cassandra
+
+volumes:
+  cassandra_data:
+  datasets:
+```
+
+### Nó 2
+
+Para o Nó 2 (192.168.100.102): 
+
+```bash
+sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.102/24 EOF
+```
+
+Ajuste o `docker-compose.yml`: 
+
+```bash
+# Ajuste as variáveis, o resto permanece igual ao Nó 1
+CASSANDRA_LISTEN_ADDRESS: "192.168.100.102"
+CASSANDRA_BROADCAST_ADDRESS: "192.168.100.102"
+CASSANDRA_RPC_ADDRESS: "192.168.100.102"
+CASSANDRA_BROADCAST_RPC_ADDRESS: "192.168.100.102"
+```
+
+### Nó 3
+
+Para o Nó 3 (192.168.100.103): 
+
+```bash
+sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.103/24 EOF 
+```
+
+Ajuste o `docker-compose.yml`: 
+
+```bash
+# Ajuste as variáveis, o resto permanece igual ao Nó 1
+CASSANDRA_LISTEN_ADDRESS: "192.168.100.103"
+CASSANDRA_BROADCAST_ADDRESS: "192.168.100.103"
+CASSANDRA_RPC_ADDRESS: "192.168.100.103"
+CASSANDRA_BROADCAST_RPC_ADDRESS: "192.168.100.103"
+```
+
+Agora teste a comunicação entre as 3 VMs com ping. 
+
+
 ## 4. Considerações Finais
 
 Esta documentação fornece uma visão geral dos aspectos essenciais do Apache Cassandra, um sistema de gerenciamento de banco de dados NoSQL colunar robusto e escalável. Exploramos métodos de importação de dados, backup e restauração, bem como outras ferramentas para administração de dados.
