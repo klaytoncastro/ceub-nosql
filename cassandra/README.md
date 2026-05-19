@@ -620,9 +620,7 @@ finally:
     close_connection(session, cluster)
 ```
 
-## 5. Configuração do Ambiente em Cluster
-
-
+### Desafio 4: Configuração do Ambiente em Cluster
 
 ### Nó 1
 
@@ -715,10 +713,10 @@ Para o Nó 2 (192.168.100.102):
 sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.102/24 EOF
 ```
 
-Ajuste o `docker-compose.yml`: 
+Ajuste o `docker-compose.yml`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
 
 ```bash
-# Ajuste as variáveis, o resto permanece igual ao Nó 1
+
 CASSANDRA_LISTEN_ADDRESS: "192.168.100.102"
 CASSANDRA_BROADCAST_ADDRESS: "192.168.100.102"
 CASSANDRA_RPC_ADDRESS: "192.168.100.102"
@@ -733,7 +731,7 @@ Para o Nó 3 (192.168.100.103):
 sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.103/24 EOF 
 ```
 
-Ajuste o `docker-compose.yml`: 
+Ajuste o `docker-compose.yml`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
 
 ```bash
 # Ajuste as variáveis, o resto permanece igual ao Nó 1
@@ -745,6 +743,19 @@ CASSANDRA_BROADCAST_RPC_ADDRESS: "192.168.100.103"
 
 Agora teste a comunicação entre as 3 VMs com ping. 
 
+A partir do nó 3
+
+```bash
+ping 192.168.100.101
+ping 192.168.100.102
+```
+
+A partir do nó 2
+
+```bash
+ping 192.168.100.101
+ping 192.168.100.103
+```
 
 ## 4. Considerações Finais
 
