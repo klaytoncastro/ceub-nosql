@@ -715,6 +715,9 @@ ip a show enp0s8
 
 Ajuste o `docker-compose.yml` da mesma forma, com o `vim /opt/ceub-nosql/cassandra/docker-compose.yml`: 
 
+- Substitua o conteúdo original do arquivo pelo conteúdo abaixo.
+- Dica: Use o comando `dd` do `vim` para deletar linha a linha e cole o novo conteúdo copiando aqui do `github` e colando com botão direito do mouse. Dentro do `vim`, Você também pode usar o comando `d40` para deletar 40 linhas, `d30` para deletar 30 e assim por diante. 
+
 ```bash
 version: "3.3"
 
