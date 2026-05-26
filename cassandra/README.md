@@ -620,24 +620,89 @@ finally:
     close_connection(session, cluster)
 ```
 
-### Desafio 4: Configuração do Ambiente em Cluster
+### Desafio 4 - Configuração do Ambiente em Cluster
 
-### Nó 1
+<!--
+   reboot
+5) Logar nas máquinas novamente e fazer o git clone (só nas novas)
+   cd /opt
+   git clone https://github.com/klaytoncastro/ceub-nosql
+6) Com as máquinas desligadas (shutdown -h now), adicionem as 2a placa de rede no Virtual Box (Adaptador 2, Rede Interna, server_farm)
+7) Liguem as máquinas. Vamos configurar o endereço na 2a placa de rede
+   Terminal1: 
+   vim /etc/systemd/network/10-enp0s8.network
+   Pressione INSERT e cole o conteúdo abaixo (botão direito)
+   [Match] Name=enp0s8 [Network] Address=192.168.100.101/24
+   Pressione ESC e digite :wq!
+   sudo systemctl restart systemd-networkd
+
+   Terminal2: 
+   vim /etc/systemd/network/10-enp0s8.network
+   Pressione INSERT e cole o conteúdo abaixo (botão direito)
+   [Match] Name=enp0s8 [Network] Address=192.168.100.102/24
+   Pressione ESC e digite :wq!
+   sudo systemctl restart systemd-networkd
+   
+   Terminal3: 
+   vim /etc/systemd/network/10-enp0s8.network
+   Pressione INSERT e cole o conteúdo abaixo (botão direito)
+   [Match] Name=enp0s8 [Network] Address=192.168.100.103/24
+   Pressione ESC e digite :wq!
+   sudo systemctl restart systemd-networkd
+
+-->
+
+- Subir as duas novas máquinas labihc (`labihc2` e `labihc3`), seguindo o roteiro do [README.md](https://github.com/klaytoncastro/ceub-nosql/tree/main#3-configura%C3%A7%C3%A3o-alternativa-de-infraestrutura) da página principal deste repositório.
+- Alterar as portas do SSH das novas (2223 e 2224) em configurações da VM, Redirecionamento de Portas (NAT), Porta do Hospedeiro para SSH.
+- Incluir uma segunda interface de rede nas 3 VMs (Adaptador 2, no modo `Rede Interna`
+- Ligue as VMs e abrir 3 abas de Terminal no Windows. Logue nas máquinas usando o protocolo SSH: 
+
+```bash
+# Terminal 1:
+ssh -p 2222 labihc@localhost
+# Terminal 2:
+ssh -p 2223 labihc@localhost
+# Terminal 3:
+ssh -p 2224 labihc@localhost
+```
+
+4) Alterar os nomes de cada (ex: `labihc01`, `labihc02` e `labihc03`) 
+
+```bash
+   sudo su
+   vim /etc/hostname
+   # Pressionar INSERT e editar o nome
+   # Pressionar ESC e digitar :wq!
+```
+
+### Configure a rede do Nó 1
 
 Para o Nó 1 (192.168.100.101): 
 
 ```bash
-sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.101/24 EOF
+vim /etc/systemd/network/10-enp0s8.network
 ```
 
-- `[Match]` informa que a regra se aplica à interface `enp0s8`.
-- `[Network]` define o IP estático com máscara `/24`.
+- Pressionar `INSERT` e incluir o conteúdo abaixo
+
+```bash
+[Match]
+Name=enp0s8
+
+[Network]
+Address=192.168.100.101/24
+```
+- Pressionar `ESC` e digitar :wq!
+
+
+>`[Match]` informa que a regra se aplica à interface `enp0s8`.
+>`[Network]` define o IP estático com máscara `/24`.
+
 - Não atribuímos Gateway nem DNS, porque essa interface é apenas interna.
 
 Ativar e reiniciar o serviço de rede: 
 
 ```bash
-
 sudo systemctl restart systemd-networkd
 sudo systemctl status systemd-networkd
 
@@ -648,7 +713,7 @@ ip link set enp0s8 up
 ip a show enp0s8
 ```
 
-Ajuste o `docker-compose.yml`: 
+Ajuste o `docker-compose.yml` da mesma forma, com o `vim /opt/ceub-nosql/cassandra`: 
 
 ```bash
 version: "3.3"
@@ -709,14 +774,22 @@ volumes:
 
 Para o Nó 2 (192.168.100.102): 
 
+
 ```bash
-sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.102/24 EOF
+sudo vim /etc/systemd/network/10-enp0s8.network  
+```
+
+```bash
+[Match]
+Name=enp0s8
+
+[Network]
+Address=192.168.100.102/24 EOF
 ```
 
 Ajuste o `docker-compose.yml` com o `container_name: cassandra-node2`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
 
 ```bash
-
 CASSANDRA_LISTEN_ADDRESS: "192.168.100.102"
 CASSANDRA_BROADCAST_ADDRESS: "192.168.100.102"
 CASSANDRA_RPC_ADDRESS: "192.168.100.102"
@@ -728,9 +801,16 @@ CASSANDRA_BROADCAST_RPC_ADDRESS: "192.168.100.102"
 Para o Nó 3 (192.168.100.103): 
 
 ```bash
-sudo tee /etc/systemd/network/10-enp0s8.network <<EOF [Match] Name=enp0s8 [Network] Address=192.168.100.103/24 EOF 
+sudo vim /etc/systemd/network/10-enp0s8.network  
 ```
 
+```
+[Match]
+Name=enp0s8
+
+[Network]
+Address=192.168.100.103/24
+```
 Ajuste o `docker-compose.yml` com o `container_name: cassandra-node3`, remova o Cassandra-Web e ajuste as variáveis, o resto permanece igual ao Nó 1: 
 
 ```bash
