@@ -713,7 +713,7 @@ ip link set enp0s8 up
 ip a show enp0s8
 ```
 
-Ajuste o `docker-compose.yml` da mesma forma, com o `vim /opt/ceub-nosql/cassandra`: 
+Ajuste o `docker-compose.yml` da mesma forma, com o `vim /opt/ceub-nosql/cassandra/docker-compose.yml`: 
 
 ```bash
 version: "3.3"
