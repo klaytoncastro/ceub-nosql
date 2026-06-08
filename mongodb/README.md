@@ -981,6 +981,491 @@ O [Robo3T](https://robomongo.org/), anteriormente conhecido como Robomongo, é o
 
 Esta documentação fornece uma visão geral acerca dos aspectos essenciais do MongoDB, uma das soluções mais populares e poderosas para gerenciamento e análise de dados no contexto de Big Data e NoSQL. Exploramos a flexibilidade de esquema do MongoDB, sua linguagem e recursos avançados de consulta (MQL) e agregação (MAF). Vimos que o MongoDB Express proporciona uma interface gráfica (GUI) amigável para gerenciamento de bases de dados MongoDB, tornando mais acessível o trabalho com documentos. Para aprofundar seu conhecimento, consulte a documentação oficial do [MongoDB](https://docs.mongodb.com/). 
 
+<!--
+Resiliência: 3 shards, cada shard com replica set de 3 membros, 1 membro por VM.
+
+Performance de escrita: shard key hashed ou composta com alta cardinalidade.
+
+Performance de leitura: shard key alinhada às consultas principais.
+
+Equilíbrio: não deixar todos os primários na mesma VM.
+
+3 VMs, 3 configsvr, 3 shards, 3 réplicas por shard, 3 mongos = 15 containers
+
+
+VM1
+- configsvr1
+- shard1-rs1
+- shard2-rs1
+- shard3-rs1
+- mongos1
+
+VM2
+- configsvr2
+- shard1-rs2
+- shard2-rs2
+- shard3-rs2
+- mongos2
+
+VM3
+- configsvr3
+- shard1-rs3
+- shard2-rs3
+- shard3-rs3
+- mongos3
+
+--- 
+
+version: "3.3"
+
+services:
+  mongo-config-1:
+    image: mongo:4.4-bionic
+    container_name: mongo-config-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --configsvr
+      --replSet configRS
+      --port 27101
+      --bind_ip 0.0.0.0
+    volumes:
+      - config1_data:/data/configdb
+
+  mongo-shard1-1:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard1-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard1RS
+      --port 27201
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard1_1_data:/data/db
+
+  mongo-shard2-2:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard2-2
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard2RS
+      --port 27301
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard2_2_data:/data/db
+
+  mongo-shard3-3:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard3-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard3RS
+      --port 27401
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard3_3_data:/data/db
+
+  mongos:
+    image: mongo:4.4-bionic
+    container_name: mongos-vm1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongos
+      --configdb configRS/192.168.100.101:27101,192.168.100.102:27102,192.168.100.103:27103
+      --port 27017
+      --bind_ip 0.0.0.0
+    depends_on:
+      - mongo-config-1
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo_express_service
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://192.168.100.101:27017/
+    volumes:
+      - ./wait-for-it.sh:/wait-for-it.sh
+    command:
+      [
+        "/wait-for-it.sh",
+        "192.168.100.101:27017",
+        "--",
+        "npm",
+        "start"
+      ]
+    depends_on:
+      - mongos
+
+volumes:
+  config1_data:
+  shard1_1_data:
+  shard2_2_data:
+  shard3_3_data:
+
+--- VM2
+
+version: "3.3"
+
+services:
+  mongo-config-2:
+    image: mongo:4.4-bionic
+    container_name: mongo-config-2
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --configsvr
+      --replSet configRS
+      --port 27102
+      --bind_ip 0.0.0.0
+    volumes:
+      - config2_data:/data/configdb
+
+  mongo-shard1-2:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard1-2
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard1RS
+      --port 27202
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard1_2_data:/data/db
+
+  mongo-shard2-3:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard2-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard2RS
+      --port 27302
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard2_3_data:/data/db
+
+  mongo-shard3-1:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard3-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard3RS
+      --port 27402
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard3_1_data:/data/db
+
+  mongos:
+    image: mongo:4.4-bionic
+    container_name: mongos-vm2
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongos
+      --configdb configRS/192.168.100.101:27101,192.168.100.102:27102,192.168.100.103:27103
+      --port 27017
+      --bind_ip 0.0.0.0
+    depends_on:
+      - mongo-config-2
+
+volumes:
+  config2_data:
+  shard1_2_data:
+  shard2_3_data:
+  shard3_1_data:
+
+--- VM3
+
+version: "3.3"
+
+services:
+  mongo-config-3:
+    image: mongo:4.4-bionic
+    container_name: mongo-config-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --configsvr
+      --replSet configRS
+      --port 27103
+      --bind_ip 0.0.0.0
+    volumes:
+      - config3_data:/data/configdb
+
+  mongo-shard1-3:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard1-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard1RS
+      --port 27203
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard1_3_data:/data/db
+
+  mongo-shard2-1:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard2-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard2RS
+      --port 27303
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard2_1_data:/data/db
+
+  mongo-shard3-2:
+    image: mongo:4.4-bionic
+    container_name: mongo-shard3-2
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard3RS
+      --port 27403
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard3_2_data:/data/db
+
+  mongos:
+    image: mongo:4.4-bionic
+    container_name: mongos-vm3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongos
+      --configdb configRS/192.168.100.101:27101,192.168.100.102:27102,192.168.100.103:27103
+      --port 27017
+      --bind_ip 0.0.0.0
+    depends_on:
+      - mongo-config-3
+
+volumes:
+  config3_data:
+  shard1_3_data:
+  shard2_1_data:
+  shard3_2_data:
+
+--- INIT CLUSTER
+
+inicialize os replica sets e adicione os shards pelo mongos.
+
+Conectar na VM1:
+
+mongo --host 192.168.100.101 --port 27101
+
+Config server:
+
+rs.initiate({
+  _id: "configRS",
+  configsvr: true,
+  members: [
+    { _id: 0, host: "192.168.100.101:27101" },
+    { _id: 1, host: "192.168.100.102:27102" },
+    { _id: 2, host: "192.168.100.103:27103" }
+  ]
+})
+
+Shard 1:
+
+mongo --host 192.168.100.101 --port 27201
+rs.initiate({
+  _id: "shard1RS",
+  members: [
+    { _id: 0, host: "192.168.100.101:27201" },
+    { _id: 1, host: "192.168.100.102:27202" },
+    { _id: 2, host: "192.168.100.103:27203" }
+  ]
+})
+
+Shard 2:
+
+mongo --host 192.168.100.103 --port 27303
+rs.initiate({
+  _id: "shard2RS",
+  members: [
+    { _id: 0, host: "192.168.100.103:27303" },
+    { _id: 1, host: "192.168.100.101:27301" },
+    { _id: 2, host: "192.168.100.102:27302" }
+  ]
+})
+
+Shard 3:
+
+mongo --host 192.168.100.102 --port 27402
+rs.initiate({
+  _id: "shard3RS",
+  members: [
+    { _id: 0, host: "192.168.100.102:27402" },
+    { _id: 1, host: "192.168.100.103:27403" },
+    { _id: 2, host: "192.168.100.101:27401" }
+  ]
+})
+
+Adicionar os shards no cluster:
+
+mongo --host 192.168.100.101 --port 27017
+sh.addShard("shard1RS/192.168.100.101:27201,192.168.100.102:27202,192.168.100.103:27203")
+sh.addShard("shard2RS/192.168.100.103:27303,192.168.100.101:27301,192.168.100.102:27302")
+sh.addShard("shard3RS/192.168.100.102:27402,192.168.100.103:27403,192.168.100.101:27401")
+
+sh.status()
+
+Habilitar sharding em um banco:
+
+sh.enableSharding("cluster")
+
+Exemplo com chave hashed:
+
+use cluster
+db.createCollection("events")
+sh.shardCollection("cluster.events", { "_id": "hashed" })
+
+Teste:
+
+for (let i = 0; i < 100000; i++) {
+  db.events.insertOne({
+    origem: "teste",
+    valor: i,
+    criadoEm: new Date()
+  })
+}
+
+sh.status()
+
+
+
+--- 
+
+Em cada VM
+docker compose -f docker-compose-mongo-vm1.yml up -d
+
+Na VM2:
+
+docker compose -f docker-compose-mongo-vm2.yml up -d
+
+Na VM3:
+
+docker compose -f docker-compose-mongo-vm3.yml up -d
+Depois, só na VM1
+
+Criar init-cluster.sh:
+
+#!/bin/bash
+set -e
+
+echo "Aguardando portas MongoDB..."
+
+./wait-for-it.sh 192.168.100.101:27101 --timeout=60
+./wait-for-it.sh 192.168.100.102:27102 --timeout=60
+./wait-for-it.sh 192.168.100.103:27103 --timeout=60
+
+./wait-for-it.sh 192.168.100.101:27201 --timeout=60
+./wait-for-it.sh 192.168.100.102:27202 --timeout=60
+./wait-for-it.sh 192.168.100.103:27203 --timeout=60
+
+./wait-for-it.sh 192.168.100.103:27303 --timeout=60
+./wait-for-it.sh 192.168.100.101:27301 --timeout=60
+./wait-for-it.sh 192.168.100.102:27302 --timeout=60
+
+./wait-for-it.sh 192.168.100.102:27402 --timeout=60
+./wait-for-it.sh 192.168.100.103:27403 --timeout=60
+./wait-for-it.sh 192.168.100.101:27401 --timeout=60
+
+echo "Inicializando configRS..."
+
+mongo --host 192.168.100.101 --port 27101 <<'EOF'
+rs.initiate({
+  _id: "configRS",
+  configsvr: true,
+  members: [
+    { _id: 0, host: "192.168.100.101:27101" },
+    { _id: 1, host: "192.168.100.102:27102" },
+    { _id: 2, host: "192.168.100.103:27103" }
+  ]
+})
+EOF
+
+sleep 10
+
+echo "Inicializando shard1RS..."
+
+mongo --host 192.168.100.101 --port 27201 <<'EOF'
+rs.initiate({
+  _id: "shard1RS",
+  members: [
+    { _id: 0, host: "192.168.100.101:27201" },
+    { _id: 1, host: "192.168.100.102:27202" },
+    { _id: 2, host: "192.168.100.103:27203" }
+  ]
+})
+EOF
+
+echo "Inicializando shard2RS..."
+
+mongo --host 192.168.100.103 --port 27303 <<'EOF'
+rs.initiate({
+  _id: "shard2RS",
+  members: [
+    { _id: 0, host: "192.168.100.103:27303" },
+    { _id: 1, host: "192.168.100.101:27301" },
+    { _id: 2, host: "192.168.100.102:27302" }
+  ]
+})
+EOF
+
+echo "Inicializando shard3RS..."
+
+mongo --host 192.168.100.102 --port 27402 <<'EOF'
+rs.initiate({
+  _id: "shard3RS",
+  members: [
+    { _id: 0, host: "192.168.100.102:27402" },
+    { _id: 1, host: "192.168.100.103:27403" },
+    { _id: 2, host: "192.168.100.101:27401" }
+  ]
+})
+EOF
+
+sleep 15
+
+echo "Aguardando mongos..."
+
+./wait-for-it.sh 192.168.100.101:27017 --timeout=60
+
+echo "Adicionando shards..."
+
+mongo --host 192.168.100.101 --port 27017 <<'EOF'
+sh.addShard("shard1RS/192.168.100.101:27201,192.168.100.102:27202,192.168.100.103:27203")
+sh.addShard("shard2RS/192.168.100.103:27303,192.168.100.101:27301,192.168.100.102:27302")
+sh.addShard("shard3RS/192.168.100.102:27402,192.168.100.103:27403,192.168.100.101:27401")
+
+sh.status()
+EOF
+
+echo "Cluster MongoDB inicializado."
+
+--- 
+
+Esse script deve ser executado só na primeira criação do cluster. Depois disso, os dados ficam nos volumes.
+-->
 
 
 
