@@ -1,4 +1,3 @@
-
 ## 1. Visão Geral
 
 Este laboratório tem como objetivo demonstrar como bancos de dados NoSQL podem ser implantados em arquitetura de cluster, utilizando múltiplas máquinas virtuais e containers Docker, aplicando os conceitos vistos  em sala de aula sobre Sistemas Distribuídos, High-Performance Computing, Big Data e NoSQL: quando o volume de dados, a taxa de acesso ou a necessidade de disponibilidade ultrapassam a capacidade de uma única máquina, torna-se necessário distribuir processamento, armazenamento e responsabilidade operacional entre vários nós. Em sistemas centralizados, todo o serviço depende de um único servidor. Esse modelo é simples, mas possui limitações claras:
@@ -9,11 +8,11 @@ Este laboratório tem como objetivo demonstrar como bancos de dados NoSQL podem 
 - menor tolerância a indisponibilidades;
 - manutenção mais difícil em ambientes críticos.
 
-Em um cluster, várias máquinas passam a trabalhar de forma coordenada. Cada máquina é chamada de **nó**. Esses nós se comunicam pela rede, dividem responsabilidades e permitem que o sistema cresça por adição de novos servidores, e não apenas pela substituição por máquinas maiores. A ideia central é dividir o problema em partes menores, processar ou armazenar essas partes em paralelo e manter mecanismos de coordenação para que o conjunto se comporte como um sistema coerente. 
+No modelo de cluster, várias máquinas passam a trabalhar de forma coordenada, onde cada máquina é chamada de **nó**. Esses nós se comunicam pela rede, dividem responsabilidades e permitem que o sistema cresça por adição de novos servidores (escalabilidade horizontal), e não apenas pela substituição por máquinas maiores (escalabilidade vertical: com mais memória, mais CPU em um único nó). A ideia central do cluster é dividir o problema em partes menores, processar ou armazenar essas partes em paralelo e manter mecanismos de coordenação para que o conjunto se comporte como um sistema coerente. 
 
 ## 2. Definição de Cluster
 
-Um cluster é um conjunto de máquinas interconectadas que cooperam para executar uma função comum. Para o usuário ou para a aplicação, esse conjunto pode parecer um único sistema, embora internamente seja composto por vários nós independentes. No contexto deste laboratório, o cluster não será usado para processamento científico clássico, como em HPC, mas para **armazenamento distribuído de dados**. Os princípios são os mesmos:
+Um cluster é um conjunto de máquinas interconectadas que cooperam para executar uma função comum. Para o usuário ou para a aplicação, esse conjunto pode parecer um único sistema, embora internamente seja composto por vários nós independentes. No contexto deste laboratório, o cluster não será usado para processamento científico clássico da computação de alto desempenho (HPC), mas para **armazenamento distribuído de dados**. Os princípios são os mesmos:
 
 - distribuição de carga;
 - paralelismo;
@@ -79,21 +78,7 @@ No Cassandra, a consistência é ajustável por operação. O cliente pode escol
 
 ## 5. Topologia Geral do Laboratório
 
-Neste laboratório, trabalharemos com uma topologia baseada em três máquinas virtuais com IPs dedicados:
-
-```text
-VM1 = 192.168.100.101
-VM2 = 192.168.100.102
-VM3 = 192.168.100.103
-
-```text
-3 VMs
-3 Config Servers
-3 Shards reais
-3 réplicas por shard
-3 Mongos
-1 Mongo Express na VM1
-```
+Como vimos em sala de aula, o MongoDB trabalha com as seguintes funções para garantir alta disponibilidade e tolerância à falha:
 
 ```text
 Replica Set
@@ -106,6 +91,25 @@ Tolerância à perda de uma VM
 Distribuição horizontal de dados
 ```
 
+Neste laboratório, trabalharemos com uma topologia baseada em três máquinas virtuais com IPs dedicados:
+
+```text
+VM1 = 192.168.100.101
+VM2 = 192.168.100.102
+VM3 = 192.168.100.103
+```
+
+Cada VM permitirá hospedar os serviços para implementação do MongoDB em cluster distribuído: 
+
+```text
+3 VMs
+3 Config Servers
+3 Shards reais
+3 réplicas por shard
+3 Mongos
+1 Mongo Express na VM1
+```
+
 Este ambiente está propositalmente **sem autenticação** e **sem keyFile**, para simplificar o aprendizado.
 
 
@@ -116,7 +120,6 @@ VM1 = 192.168.100.101
 VM2 = 192.168.100.102
 VM3 = 192.168.100.103
 ```
----
 
 ### 3.2. Topologia
 
