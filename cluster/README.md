@@ -446,19 +446,19 @@ volumes:
 Na VM1:
 
 ```bash
-docker compose -f docker-compose-mongo-vm1.yml up -d
+docker-compose -f docker-compose-mongo-vm1.yml up -d
 ```
 
 Na VM2:
 
 ```bash
-docker compose -f docker-compose-mongo-vm2.yml up -d
+docker-compose -f docker-compose-mongo-vm2.yml up -d
 ```
 
 Na VM3:
 
 ```bash
-docker compose -f docker-compose-mongo-vm3.yml up -d
+docker-compose -f docker-compose-mongo-vm3.yml up -d
 ```
 
 Verificar:
@@ -747,13 +747,13 @@ Usuários e permissões
 Em cada VM:
 
 ```bash
-docker compose -f docker-compose-mongo-vmX.yml down
+docker-compose -f docker-compose-mongo-vmX.yml down
 ```
 
 Para apagar os dados também:
 
 ```bash
-docker compose -f docker-compose-mongo-vmX.yml down -v
+docker-compose -f docker-compose-mongo-vmX.yml down -v
 ```
 
 Substitua `vmX` por:
