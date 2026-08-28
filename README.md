@@ -10,11 +10,15 @@ Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big 
 
 | Atividade          | Desafio  | Prazo      |
 |--------------------|----------|------------|
-| [01](./mongodb/) MongoDB   | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 07/04/2026 |
-| [02](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 07/04/2026 |
+| [01](./mongodb/) MongoDB   | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 21/08/2026 |
+| [02](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 28/08/2026 |
+
+
+<!--
 | [03](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 07/04/2026 |
 | [04](./redis/) Redis    | Prática com Banco de Dados Chave-Valor | 02/04/2026 |
 | [05](./cassandra/) Cassandra | Modelagem e consulta em bases colunares distribuídas | 26/09/2026 | 
+-->
 
 ## 2. Infraestrutura dos Laboratórios
 
