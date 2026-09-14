@@ -154,10 +154,10 @@ Ou seja, concluímos que a proposta do Cassandra — e dos bancos NoSQL em geral
 
 ## 3. Prática em Laboratório
 
-Agora vamos para a prática! Execute os contêineres do Cassandra (DB e GUI) e conclua o roteiro a seguir. Se este for seu primeiro acesso, vá até o diretório `/opt/ceub-bigdata/cassandra` e certifique-se que o script `wait-for-it.sh` tenha permissão de execução: 
+Agora vamos para a prática! Execute os contêineres do Cassandra (DB e GUI) e conclua o roteiro a seguir. Se este for seu primeiro acesso, vá até o diretório `/opt/ceub-nosql/cassandra` e certifique-se que o script `wait-for-it.sh` tenha permissão de execução: 
 
 ```bash
-cd /opt/ceub-bigdata/cassandra
+cd /opt/ceub-nosql/cassandra
 chmod +x wait-for-it.sh
 ```
 
