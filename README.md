@@ -6,13 +6,11 @@ Olá, estudante! Seja bem-vindo aos laboratórios da disciplina de **Bancos de D
 
 Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big Data por meio de desafios práticos. Cada desafio proporcionará uma experiência aplicada, permitindo que você consolide os conhecimentos adquiridos e aprofunde seu aprendizado de maneira progressiva. Durante essa jornada, você terá contato com ferramentas amplamente utilizadas no mercado e empregará técnicas para resolver problemas reais.
 
-
-
 | Atividade          | Desafio  | Prazo      |
 |--------------------|----------|------------|
-| [01](./mongodb/) MongoDB   | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 21/08/2026 |
-| [02](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 28/08/2026 |
-
+| [01](./mongodb/) MongoDB   | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 17/08/2026 |
+| [02](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 31/08/2026 |
+| [03](./cassandra/) Cassandra | Modelagem e consulta em bases colunares distribuídas | 21/09/2026 | 
 
 <!--
 | [03](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 07/04/2026 |
