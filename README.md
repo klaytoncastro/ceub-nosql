@@ -12,12 +12,8 @@ Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big 
 | [02](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 31/08/2026 |
 | [03](./cassandra/) Cassandra | Modelagem e consulta em bases colunares distribuídas | 21/09/2026 | 
 | [04](./cluster/) Clustering MongoDB | Comparação das configurações para clusterização de ambiente com MongoDB e Cassandra | 28/09/2026 | 
-
-<!--
-| [03](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 07/04/2026 |
-| [04](./redis/) Redis    | Prática com Banco de Dados Chave-Valor | 02/04/2026 |
-| [05](./cassandra/) Cassandra | Modelagem e consulta em bases colunares distribuídas | 26/09/2026 | 
--->
+| [05](./redis/) Redis    | Prática com Banco de Dados Chave-Valor | 05/10/2026 |
+| [06](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 19/10/2026 |
 
 ## 2. Infraestrutura dos Laboratórios
 
