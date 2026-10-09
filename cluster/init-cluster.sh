@@ -38,7 +38,7 @@ wait_for_port 192.168.100.103 27403 60
 
 echo "Inicializando configRS..."
 
-docker exec -it mongo-config-1 mongosh --host 192.168.100.101 --port 27101 <<'EOF'
+docker exec -i mongo-config-1 mongosh --host 192.168.100.101 --port 27101 <<'EOF'
 rs.initiate({
   _id: "configRS",
   configsvr: true,
@@ -54,7 +54,7 @@ sleep 10
 
 echo "Inicializando shard1RS..."
 
-docker exec -it mongo-shard1-1 mongosh --host 192.168.100.101 --port 27201 <<'EOF'
+docker exec -i mongo-shard1-1 mongosh --host 192.168.100.101 --port 27201 <<'EOF'
 rs.initiate({
   _id: "shard1RS",
   members: [
@@ -67,7 +67,7 @@ EOF
 
 echo "Inicializando shard2RS..."
 
-docker exec -it mongo-shard2-1 mongosh --host 192.168.100.101 --port 27301 <<'EOF'
+docker exec -i mongo-shard2-1 mongosh --host 192.168.100.101 --port 27301 <<'EOF'
 rs.initiate({
   _id: "shard2RS",
   members: [
@@ -80,7 +80,7 @@ EOF
 
 echo "Inicializando shard3RS..."
 
-docker exec -it mongo-shard3-1 mongosh --host 192.168.100.101 --port 27401 <<'EOF'
+docker exec -i mongo-shard3-1 mongosh --host 192.168.100.101 --port 27401 <<'EOF'
 rs.initiate({
   _id: "shard3RS",
   members: [
@@ -99,7 +99,7 @@ wait_for_port 192.168.100.101 27017 60
 
 echo "Adicionando shards ao cluster..."
 
-docker exec -it mongos-vm1 mongosh --host 192.168.100.101 --port 27017 <<'EOF'
+docker exec -i mongos-vm1 mongosh --host 192.168.100.101 --port 27017 <<'EOF'
 sh.addShard("shard1RS/192.168.100.101:27201,192.168.100.102:27202,192.168.100.103:27203")
 sh.addShard("shard2RS/192.168.100.101:27301,192.168.100.102:27302,192.168.100.103:27303")
 sh.addShard("shard3RS/192.168.100.101:27401,192.168.100.102:27402,192.168.100.103:27403")
