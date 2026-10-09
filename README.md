@@ -8,13 +8,23 @@ Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big 
 
 | Atividade          | Desafio  | Prazo      |
 |--------------------|----------|------------|
+| [01](./mongodb/) MongoDB   | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 07/08/2026 |
+| [02](./cassandra/) Cassandra | Modelagem e consulta em bases colunares distribuídas | 14/08/2026 | 
+| [03](./redis/) Redis    | Prática com Banco de Dados Chave-Valor | 28/08/2026 |
+| [04](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 04/09/2026 |
+| [05](./cluster/) Clustering MongoDB | Comparação das configurações para clusterização de ambiente com MongoDB e Cassandra | 18/09/2026 | 
+| [06](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 30/09/2026 |
+
+<!--
+| Atividade          | Desafio  | Prazo      |
+|--------------------|----------|------------|
 | [01](./mongodb/) MongoDB   | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 17/08/2026 |
 | [02](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 31/08/2026 |
 | [03](./cassandra/) Cassandra | Modelagem e consulta em bases colunares distribuídas | 21/09/2026 | 
 | [04](./cluster/) Clustering MongoDB | Comparação das configurações para clusterização de ambiente com MongoDB e Cassandra | 28/09/2026 | 
 | [05](./redis/) Redis    | Prática com Banco de Dados Chave-Valor | 05/10/2026 |
 | [06](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 19/10/2026 |
-
+-->
 ## 2. Infraestrutura dos Laboratórios
 
 Considerando o tempo e recursos disponíveis, optamos por utilizar uma infraestrutura baseada em código, por meio do Docker, uma ferramenta leve de virtualização de aplicativos, que permite implantar, levantar e baixar softwares e suas dependências (bibliotecas, configurações e código) com simples comandos via orquestrador `compose` (`docker compose up -d`). Trata-se de uma solução amplamente adotada no mercado para criar ambientes replicáveis e consistentes, eliminando a necessidade de configurar e instalar manualmente cada aplicação em diferentes máquinas Diferentemente de máquinas virtuais, que replicam um sistema operacional inteiro, o Docker compartilha o kernel do sistema host, tornando a execução leve e eficiente em ambientes isolados, chamados containers. Esses containers são altamente portáveis e podem ser implantados, executados e rapidamente eliminados em qualquer sistema operacional compatível.
