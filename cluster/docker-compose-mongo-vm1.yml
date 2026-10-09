@@ -1,0 +1,94 @@
+version: "3.3"
+
+services:
+  mongo-config-1:
+    image: mongo:7
+    container_name: mongo-config-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --configsvr
+      --replSet configRS
+      --port 27101
+      --bind_ip 0.0.0.0
+    volumes:
+      - config1_data:/data/configdb
+
+  mongo-shard1-1:
+    image: mongo:7
+    container_name: mongo-shard1-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard1RS
+      --port 27201
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard1_1_data:/data/db
+
+  mongo-shard2-1:
+    image: mongo:7
+    container_name: mongo-shard2-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard2RS
+      --port 27301
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard2_1_data:/data/db
+
+  mongo-shard3-1:
+    image: mongo:7
+    container_name: mongo-shard3-1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard3RS
+      --port 27401
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard3_1_data:/data/db
+
+  mongos:
+    image: mongo:7
+    container_name: mongos-vm1
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongos
+      --configdb configRS/192.168.100.101:27101,192.168.100.102:27102,192.168.100.103:27103
+      --port 27017
+      --bind_ip 0.0.0.0
+    depends_on:
+      - mongo-config-1
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express-vm1
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://192.168.100.101:27017/
+    volumes:
+      - ./wait-for-it.sh:/wait-for-it.sh
+    command:
+      [
+        "/wait-for-it.sh",
+        "192.168.100.101:27017",
+        "--",
+        "npm",
+        "start"
+      ]
+    depends_on:
+      - mongos
+
+volumes:
+  config1_data:
+  shard1_1_data:
+  shard2_1_data:
+  shard3_1_data:
