@@ -1,0 +1,73 @@
+version: "3.3"
+
+services:
+  mongo-config-3:
+    image: mongo:7
+    container_name: mongo-config-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --configsvr
+      --replSet configRS
+      --port 27103
+      --bind_ip 0.0.0.0
+    volumes:
+      - config3_data:/data/configdb
+
+  mongo-shard1-3:
+    image: mongo:7
+    container_name: mongo-shard1-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard1RS
+      --port 27203
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard1_3_data:/data/db
+
+  mongo-shard2-3:
+    image: mongo:7
+    container_name: mongo-shard2-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard2RS
+      --port 27303
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard2_3_data:/data/db
+
+  mongo-shard3-3:
+    image: mongo:7
+    container_name: mongo-shard3-3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongod --shardsvr
+      --replSet shard3RS
+      --port 27403
+      --bind_ip 0.0.0.0
+    volumes:
+      - shard3_3_data:/data/db
+
+  mongos:
+    image: mongo:7
+    container_name: mongos-vm3
+    network_mode: host
+    restart: unless-stopped
+    command: >
+      mongos
+      --configdb configRS/192.168.100.101:27101,192.168.100.102:27102,192.168.100.103:27103
+      --port 27017
+      --bind_ip 0.0.0.0
+    depends_on:
+      - mongo-config-3
+
+volumes:
+  config3_data:
+  shard1_3_data:
+  shard2_3_data:
+  shard3_3_data:
