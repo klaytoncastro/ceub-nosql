@@ -1005,10 +1005,21 @@ docker-compose up -d
 
 O `curl` faz download do arquivo público; `-f` sinaliza respostas HTTP de erro, `-L` acompanha redirecionamentos e `-o` estabelece o nome e o destino. No Compose do curso, `datasets/` é montada dentro de `mongo_service` como `/datasets`: **não é necessário copiar o arquivo com `docker cp`**.
 
-Restaure o arquivo no MongoDB com a autenticação exigida pelo contêiner:
+```bash
+# A partir da VM1
+docker-compose -f docker-compose-vm1.yml up -d
+
+# A partir da VM2
+docker-compose -f docker-compose-vm2.yml up -d
+
+# A partir da VM3
+docker-compose -f docker-compose-vm3.yml up -d
+```
+
+A partir da VM1, restaure o arquivo no MongoDB com a autenticação exigida pelo contêiner:
 
 ```bash
-docker exec -it mongo_service mongorestore \
+docker exec -it mongos-vm1 mongorestore \
   --archive=/datasets/sampledata.archive \
   --port=27017 \
   --username=root \
