@@ -974,7 +974,9 @@ mongodump --db MeuBancoDeDados --out /caminho/para/diretorio_de_backup
 
 Assim, em caso de falha do sistema ou perda de dados, você pode usar o `mongorestore` (ferramenta complementar ao `mongodump`) para restaurar seus dados a partir dos backups. 
 
-### Prática - Lab 3: Importando Datasets 
+## Práticas - Parte 3
+
+### Lab 3: Importando Datasets 
 
 Agora vamos obter os dados de uma fonte operacional, preservar sua estrutura original e torná-los acessíveis a outros sistemas de processamento. Neste laboratório, usaremos o MongoDB, banco de dados orientado a documentos, como fonte de dados para um Data Lake implementado sobre o MinIO, com protocolo S3 compatível. O MongoDB será responsável pela consulta e manutenção dos documentos operacionais; o MinIO receberá cópias extraídas dessas coleções como objetos, separando as responsabilidades de **armazenamento operacional** e **armazenamento analítico**. A integração reproduz, em escala didática, a etapa de ingestão frequentemente encontrada em arquiteturas modernas de dados.
 
