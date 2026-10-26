@@ -1,6 +1,6 @@
 # Introdução ao MongoDB
 
-## Visão Geral
+## 1. Visão Geral
 
 ### O que é o MongoDB?
 
@@ -75,7 +75,9 @@ O **MongoDB Express** é uma interface gráfica que facilita a administração, 
 
 Dessa forma, MongoDB e MongoDB Express são ferramentas complementares que simplificam a gestão do ambiente, permitindo que os desenvolvedores e administradores trabalhem de forma eficiente com dados dinâmicos em uma abordagem robusta e, ao mesmo tempo, flexível. Mais à frente, veremos também a ferramenta oficial para GUI, que precisa ser instalada, o MongoDB Compass. 
 
-## Lab 1: Configurando uma Aplicação com MongoDB Atlas e Google Colab
+## Práticas - Parte 1
+
+### Lab 1: Configurando uma Aplicação com MongoDB Atlas e Google Colab
 
 Em aplicações modernas baseadas em dados, normalmente temos pelo menos as três seguintes camadas principais:
 
@@ -414,8 +416,9 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 ```
+## Práticas - Parte 2
 
-## Lab 2: Configurando o Ambiente (On-Premises)
+### Lab 2: Configurando o Ambiente (On-Premises)
 
 1. O dimensionamento apropriado de recursos depende das necessidades específicas do seu projeto. De modo a garantir um desempenho adequado e evitar problemas com os contêineres, ajuste a quantidade de memória nas configurações de Sistema na VM VirtualBox conforme orientações abaixo: 
 
@@ -463,7 +466,7 @@ docker-compose up -d
 docker ps
 docker-compose logs
 ```
-## Acesso GUI: MongoDB Express 
+### Acesso GUI: MongoDB Express 
 
 1. Acesse o MongoDB Express pelo navegador (`http:\\localhost:8081`) e forneça as credenciais: 
 
@@ -498,7 +501,7 @@ docker-compose logs
 6. Na parte inferior da tela, observe o índice padrão `_id`. Crie um novo índice, por exemplo, para o campo `nome`. 
 7. Selecione um documento e clique em `Delete Document`. 
 
-## Acesso CLI: MongoDB 
+### Acesso CLI: MongoDB 
 
 1. Acesse o Shell do Contêiner MongoDB: 
 ```bash
@@ -786,7 +789,7 @@ db.Estudantes.remove({ nome: "Vladimir Silva" })
 exit
 ```
 
-## Pipelines de Dados
+## 3. Pipelines de Dados
 
 Um pipeline constitui uma série de etapas pelas quais os documentos passam, onde cada etapa efetua uma operação específica no conjunto de dados. Essas etapas são executadas em sequência, permitindo que você processe e transforme os documentos de maneira controlada. 
 
@@ -951,7 +954,7 @@ db.Vendas.aggregate([
 ```
 Neste exemplo, estamos usando `$totalPreco` e `$totalProdutos` para armazenar os valores somados dos preços e a contagem total de produtos para cada categoria. Em seguida, usamos `$mediaPreco` para calcular a média, dividindo `$totalPreco` por `$totalProdutos`. Por fim, projetamos os resultados para tornar o formato de exibição mais amigável. 
 
-## Ferramentas para Ingestão de Dados e Administração do Ambiente
+## 4. Ferramentas para Ingestão de Dados e Administração do Ambiente
 
 ### Importação de Dados
 
@@ -971,13 +974,75 @@ mongodump --db MeuBancoDeDados --out /caminho/para/diretorio_de_backup
 
 Assim, em caso de falha do sistema ou perda de dados, você pode usar o `mongorestore` (ferramenta complementar ao `mongodump`) para restaurar seus dados a partir dos backups. 
 
+### Prática 3 - Importando Datasets 
+
+Agora vamos obter os dados de uma fonte operacional, preservar sua estrutura original e torná-los acessíveis a outros sistemas de processamento. Neste laboratório, usaremos o MongoDB, banco de dados orientado a documentos, como fonte de dados para um Data Lake implementado sobre o MinIO, com protocolo S3 compatível. O MongoDB será responsável pela consulta e manutenção dos documentos operacionais; o MinIO receberá cópias extraídas dessas coleções como objetos, separando as responsabilidades de **armazenamento operacional** e **armazenamento analítico**. A integração reproduz, em escala didática, a etapa de ingestão frequentemente encontrada em arquiteturas modernas de dados.
+
+**Objetivo:** restaurar os datasets oficiais da MongoDB; selecionar coleções com dados semiestruturados. 
+
+> Atenção: o `sampledata.archive` é um arquivo de backup no formato produzido pelas ferramentas do MongoDB, não um conjunto de arquivos CSV ou JSON. **`mongorestore`** restaura o banco e importa essas coleções. 
+
+### Base de dados e ambiente de execução
+
+Execute os comandos a seguir no terminal do computador hospedeiro:
+
+```bash
+cd /opt/idp-bigdata/mongodb
+mkdir -p datasets
+
+curl -fL \
+  https://atlas-education.s3.amazonaws.com/sampledata.archive \
+  -o datasets/sampledata.archive
+
+ls -lh datasets/sampledata.archive
+
+# Os Compose do curso utilizam a rede Docker externa mybridge.
+docker network inspect mybridge >/dev/null 2>&1 || docker network create mybridge
+docker-compose up -d
+```
+
+O `curl` faz download do arquivo público; `-f` sinaliza respostas HTTP de erro, `-L` acompanha redirecionamentos e `-o` estabelece o nome e o destino. No Compose do curso, `datasets/` é montada dentro de `mongo_service` como `/datasets`: **não é necessário copiar o arquivo com `docker cp`**.
+
+Restaure o arquivo no MongoDB com a autenticação exigida pelo contêiner:
+
+```bash
+docker exec -it mongo_service mongorestore \
+  --archive=/datasets/sampledata.archive \
+  --port=27017 \
+  --username=root \
+  --password=mongo \
+  --authenticationDatabase=admin
+```
+
+Não empregamos `--drop`, pois seu uso excluiria coleções existentes antes de restaurá-las. O arquivo de amostras contém múltiplos bancos de dados; o processo de restauração não é restrito a uma única coleção.
+
+### Reconhecendo as coleções e seu potencial analítico
+
+Para a atividade, selecionamos três coleções com finalidades distintas:
+
+| Banco | Coleção | Dados e questões possíveis | Interesse didático |
+|---|---|---|---|
+| `sample_supplies` | `sales` | Vendas, itens, lojas e métodos de compra | Documentos com arrays de itens, úteis para posteriores transformações |
+| `sample_mflix` | `movies` | Filmes, gêneros e atributos associados | Dados semiestruturados e possibilidades de análises textuais |
+| `sample_training` | `grades` | Registros de avaliações | Maior volume e exemplo para processamento analítico |
+
+
+```bash
+docker exec mongo_service mongo \
+  --username root --password mongo \
+  --authenticationDatabase admin --quiet \
+  --eval 'print("Vendas:", db.getSiblingDB("sample_supplies").sales.countDocuments({})); print("Filmes:", db.getSiblingDB("sample_mflix").movies.countDocuments({})); print("Avaliações:", db.getSiblingDB("sample_training").grades.countDocuments({}));'
+```
+
+**Observe:** como uma venda representa múltiplos produtos em `items`, seu documento MongoDB é diferente de uma linha plana em uma tabela relacional. A ingestão Bronze preservará essa estrutura; o tratamento desses arrays será feito posteriormente.
+
 ### Outras Considerações e Ferramentas
 
 Além do MongoDB Express, você também pode experimentar a ferramenta [MongoDB Compass](https://www.mongodb.com/try/download/compass) para obter uma experiência de visualização e consulta ainda mais avançada. É uma opção útil para desenvolvedores e administradores que preferem uma GUI (interface gráfica de usuário) para interagir com bancos de dados MongoDB.
 
 O [Robo3T](https://robomongo.org/), anteriormente conhecido como Robomongo, é outra GUI para gerenciamento de bancos de dados MongoDB. Ela fornece uma interface intuitiva que permite criar, editar e consultar seus bancos de dados e também oferece recursos como autocompletar, formatação de consulta, suporte a múltiplas conexões e visualização de documentos BSON. 
 
-## Conclusão
+## 5. Conclusão
 
 Esta documentação fornece uma visão geral acerca dos aspectos essenciais do MongoDB, uma das soluções mais populares e poderosas para gerenciamento e análise de dados no contexto de Big Data e NoSQL. Exploramos a flexibilidade de esquema do MongoDB, sua linguagem e recursos avançados de consulta (MQL) e agregação (MAF). Vimos que o MongoDB Express proporciona uma interface gráfica (GUI) amigável para gerenciamento de bases de dados MongoDB, tornando mais acessível o trabalho com documentos. Para aprofundar seu conhecimento, consulte a documentação oficial do [MongoDB](https://docs.mongodb.com/). 
 
@@ -1466,6 +1531,3 @@ echo "Cluster MongoDB inicializado."
 
 Esse script deve ser executado só na primeira criação do cluster. Depois disso, os dados ficam nos volumes.
 -->
-
-
-
