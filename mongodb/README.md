@@ -1007,13 +1007,13 @@ O `curl` faz download do arquivo público; `-f` sinaliza respostas HTTP de erro,
 
 ```bash
 # A partir da VM1
-docker-compose -f docker-compose-vm1.yml up -d
+docker-compose -f docker-compose-mongo-vm1.yml up -d
 
 # A partir da VM2
-docker-compose -f docker-compose-vm2.yml up -d
+docker-compose -f docker-compose-mongo-vm2.yml up -d
 
 # A partir da VM3
-docker-compose -f docker-compose-vm3.yml up -d
+docker-compose -f docker-compose-mongo-vm3.yml up -d
 ```
 
 A partir da VM1, restaure o arquivo no MongoDB com a autenticação exigida pelo contêiner:
