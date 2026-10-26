@@ -989,7 +989,7 @@ Agora vamos obter os dados de uma fonte operacional, preservar sua estrutura ori
 Execute os comandos a seguir no terminal do computador hospedeiro:
 
 ```bash
-cd /opt/ceub-bigdata/mongodb
+cd /opt/ceub-nosql/mongodb
 mkdir -p datasets
 
 curl -fL \
