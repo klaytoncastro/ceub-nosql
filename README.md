@@ -11,9 +11,10 @@ Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big 
 | [01](./mongodb/) MongoDB   | Exploração de dados estruturados e semiestruturados em SGBD orientado a documentos | 07/08/2026 |
 | [02](./cassandra/) Cassandra | Modelagem e consulta em bases colunares distribuídas | 14/08/2026 | 
 | [03](./redis/) Redis    | Prática com Banco de Dados Chave-Valor | 28/08/2026 |
-| [04](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 04/09/2026 |
-| [05](./cluster/) Clustering MongoDB | Comparação das configurações para clusterização de ambiente com MongoDB e Cassandra | 18/09/2026 | 
-| [06](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 30/09/2026 |
+| [04](./flask/) Flask Web API     | Desenvolvimento de API com persistência em SGBD orientado a documentos | 18/09/2026 |
+| [05](./cluster/) Clustering MongoDB | Comparação das configurações para clusterização de ambiente com MongoDB e Cassandra | 28/09/2026 | 
+| [06](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 26/10/2026 |
+| [07](./neo4j/) Redis    | Prática com Banco de Dados de Grafo | 09/11/2026 |
 
 <!--
 | Atividade          | Desafio  | Prazo      |
