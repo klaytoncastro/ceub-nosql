@@ -25,6 +25,7 @@ Ao longo do curso, exploraremos conceitos, infraestrutura e aplicações de Big 
 | [04](./cluster/) Clustering MongoDB | Comparação das configurações para clusterização de ambiente com MongoDB e Cassandra | 28/09/2026 | 
 | [05](./redis/) Redis    | Prática com Banco de Dados Chave-Valor | 05/10/2026 |
 | [06](./mlops/) MLOps NoSQL DB    | Desenvolvimento de API para serving de modelos de Machine Learning e controle de ciclo de vida em SGBD orientado a documentos | 19/10/2026 |
+| [07](./neo4j/) Neo4j    | Prática com Banco de Dados de Grafos | 13/11/2026 |
 -->
 ## 2. Infraestrutura dos Laboratórios
 
