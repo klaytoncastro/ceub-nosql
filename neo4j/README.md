@@ -259,19 +259,9 @@ Ao final, você deverá ser capaz de:
 5. Implementar consultas de recomendação baseadas em regras.
 6. Modificar o grafo e analisar o impacto das alterações.
 
-**Importante:** a atividade deverá ser executada individualmente durante a aula, com entrega dos resultados ao final.
-
----
-
 ## Contextualização
 
-Imagine uma plataforma de ensino que precisa recomendar cursos aos estudantes.
-
-Cada estudante possui interesses específicos, já concluiu determinados cursos e somente pode realizar uma disciplina quando seus pré-requisitos forem atendidos.
-
-O sistema precisa responder:
-
-**Qual curso determinado aluno pode realizar agora, considerando seus interesses e os pré-requisitos já concluídos?**
+Imagine uma plataforma de ensino que precisa recomendar cursos aos estudantes. Cada estudante possui interesses específicos, já concluiu determinados cursos e somente pode realizar uma disciplina quando seus pré-requisitos forem atendidos. O sistema precisa responder: **Qual curso determinado aluno pode realizar agora, considerando seus interesses e os pré-requisitos já concluídos?**
 
 ### Modelo de dados
 
@@ -303,8 +293,8 @@ Os relacionamentos são:
 
 Os estudantes são:
 
-- **Maya:** gosta de Graphs e concluiu Graph Basics.
-- **Leo:** gosta de Data e concluiu Graph Basics.
+- **Mayara:** gosta de Graphs e concluiu Graph Basics.
+- **Leonardo:** gosta de Data e concluiu Graph Basics.
 
 ### Regras de recomendação
 
@@ -377,8 +367,8 @@ FOR (t:Topic) REQUIRE t.id IS UNIQUE;
 
 ```cypher
 UNWIND [
-  {id:'maya', name:'Maya'},
-  {id:'leo', name:'Leo'}
+  {id:'Mayara', name:'Mayara'},
+  {id:'Leonardo', name:'Leonardo'}
 ] AS row
 
 MERGE (p:Person {id:row.id})
@@ -417,8 +407,8 @@ SET c.title = row.title,
 
 ```cypher
 UNWIND [
-  {person:'maya', topic:'graphs'},
-  {person:'leo', topic:'data'}
+  {person:'Mayara', topic:'graphs'},
+  {person:'Leonardo', topic:'data'}
 ] AS row
 
 MATCH (p:Person {id:row.person})
@@ -430,7 +420,7 @@ MERGE (p)-[:LIKES_TOPIC]->(t);
 ### Registrar os cursos concluídos
 
 ```cypher
-UNWIND ['maya', 'leo'] AS personId
+UNWIND ['Mayara', 'Leonardo'] AS personId
 
 MATCH (p:Person {id:personId})
 MATCH (c:Course {id:'c1'})
@@ -561,11 +551,11 @@ Resultados para conferência:
 
 Construa consultas para identificar:
 
-1. Quais assuntos interessam à Maya?
-2. Quais cursos Maya concluiu?
-3. Quais cursos Leo concluiu?
+1. Quais assuntos interessam à Mayara?
+2. Quais cursos Mayara concluiu?
+3. Quais cursos Leonardo concluiu?
 4. Quais estudantes concluíram Graph Basics?
-5. Quais cursos estão relacionados aos interesses de Leo?
+5. Quais cursos estão relacionados aos interesses de Leonardo?
 
 Para começar, observe o padrão:
 
@@ -581,12 +571,12 @@ Altere os padrões e filtros conforme necessário para resolver as demais quest�
 
 Agora vamos construir uma consulta que aplica as regras de elegibilidade definidas anteriormente.
 
-### Recomendação para Maya
+### Recomendação para Mayara
 
 Execute:
 
 ```cypher
-MATCH (m:Person {id:'maya'})-[:LIKES_TOPIC]->(t)
+MATCH (m:Person {id:'Mayara'})-[:LIKES_TOPIC]->(t)
       <-[:ABOUT]-(c:Course)
 
 WHERE c.id IS NOT NULL
@@ -623,11 +613,11 @@ Responda:
 2. Por que utilizamos `NOT EXISTS` para verificar cursos concluídos?
 3. Qual a finalidade do segundo `NOT EXISTS`?
 4. Por que utilizamos `DISTINCT`?
-5. O que aconteceria se Maya não tivesse concluído Graph Basics?
+5. O que aconteceria se Mayara não tivesse concluído Graph Basics?
 
-### Desafio — Recomendação para Leo
+### Desafio — Recomendação para Leonardo
 
-Modifique a consulta anterior para recomendar cursos ao estudante Leo. Explique por que Graph Search não é recomendado para Leo, mesmo ele tendo concluído o pré-requisito Graph Basics.
+Modifique a consulta anterior para recomendar cursos ao estudante Leonardo. Explique por que Graph Search não é recomendado para Leonardo, mesmo ele tendo concluído o pré-requisito Graph Basics.
 
 
 ## Alteração das regras de negócio
@@ -647,18 +637,18 @@ MATCH (r:Course {id:'c4'})
 MERGE (c)-[:REQUIRES]->(r);
 ```
 
-Execute novamente a consulta de recomendação de Maya.
+Execute novamente a consulta de recomendação de Mayara.
 
 ### Desafio — Análise do impacto
 
 Responda:
 
-1. Maya ainda pode realizar Graph Search?
+1. Mayara ainda pode realizar Graph Search?
 2. Por que o resultado mudou?
 3. Quantos relacionamentos existem agora no grafo?
 4. Qual é o conjunto atual de pré-requisitos de Graph Search?
 
-**Resultado de conferência:** após a alteração, Maya não possui curso elegível entre os assuntos de seu interesse.
+**Resultado de conferência:** após a alteração, Mayara não possui curso elegível entre os assuntos de seu interesse.
 
 ## Criar seu próprio estudante
 
@@ -703,7 +693,7 @@ MERGE (p)-[:COMPLETED]->(c);
 
 ### Desafio — Personalização
 
-Adapte a consulta de recomendação para Maya ao seu próprio estudante.
+Adapte a consulta de recomendação para Mayara ao seu próprio estudante.
 
 Observe os resultados e responda:
 
