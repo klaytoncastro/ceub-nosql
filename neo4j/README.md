@@ -52,7 +52,7 @@ O conjunto de dados que usaremos inclui informações sobre:
 - `pl_rade`: Raio do planeta em raios terrestres.
 - `pl_masse`: Massa do planeta em massas terrestres.
 - `st_teff`: Temperatura efetiva da estrela hospedeira.
-- `pl_facility`: Observatório que descobriu o planeta.
+- `disc_facility`: Observatório que descobriu o planeta.
 
 Acesse o link a seguir e verifique as colunas úteis para construir seu dataset: `https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=PS`
 
@@ -64,11 +64,11 @@ Há vários outros recursos disponívels para explorar no site ExoPlanetArchive:
 - **Nós**:
   - `Planeta`: Representa um exoplaneta.
   - `Estrela`: Representa uma estrela hospedeira.
-  - `Observatório`: Representa um observatório.
+  - `Observatorio`: Representa um observatório.
 
 - **Relações**:
   - `ORBITA`: Relaciona um `Planeta` com uma `Estrela`.
-  - `DESCOBERTO_POR`: Relaciona um `Planeta` com um `Observatório`.
+  - `DESCOBERTO_POR`: Relaciona um `Planeta` com um `Observatorio`.
 
 ### 1. Criação dos Nós
 Crie nós para cada planeta, estrela hospedeira e observatório usando as informações extraídas do conjunto de dados.
@@ -78,85 +78,115 @@ Estabeleça relações `ORBITA` entre planetas e suas estrelas hospedeiras, e re
 
 ### 3. Importação de dados:
 
-A importação será realizada utilizando um contêiner temporário com a mesma imagem e o mesmo volume de dados do Neo4j principal. O contêiner Neo4j principal deve estar previamente criado com armazenamento persistente em `/data`. Os arquivos CSV devem estar disponíveis no diretório atual.
+O dataset disponibilizado contém um único arquivo, `exoplanets.csv`, extraído de `exoplanets.zip`. A carga será realizada com `LOAD CSV`, diretamente no Neo4j em execução, sem utilizar `neo4j-admin database import full` nem interromper o contêiner.
 
-### 3.1. Identificar o contêiner principal
+### 3.1. Identificar o contêiner
 
 ```bash
 docker ps -a
+CONTAINER=devneo4j
 ```
 
-Nos exemplos seguintes, consideraremos que o contêiner principal se chama `neo4j`. Caso tenha outro nome, altere a variável:
+Utilize o nome ou ID do contêiner Neo4j correspondente ao seu ambiente.
+
+### 3.2. Preparar o CSV da NASA
 
 ```bash
-CONTAINER=neo4j
-
-#Identifique a imagem e confira os volumes utilizados:
-
-IMAGE=$(docker inspect -f '{{.Config.Image}}' "$CONTAINER")
-docker inspect -f '{{range .Mounts}}{{println .Destination .Source}}{{end}}' "$CONTAINER"
-echo "$IMAGE"
+cd /opt/ceub-nosql/neo4j/dataset
+apt install unzip  # somente se o comando unzip não estiver instalado
+unzip exoplanets.zip
 ```
 
-### 3.2. Preparar os arquivos CSV
-
-No terminal, acesse o diretório que contém os arquivos:
+O CSV original começa com linhas de metadados identificadas por `#`. Remova apenas essas linhas iniciais, preservando o arquivo de origem:
 
 ```bash
-cd /opt/ceub-nosql/neo4j/import
-ls -lh *.csv
+awk 'BEGIN{s=0} !s && (/^#/ || /^[[:space:]]*$/) {next} {s=1; print}' exoplanets.csv > exoplanets_clean.csv
+head -n 1 exoplanets_clean.csv
 ```
 
-Os seguintes arquivos deverão estar presentes:
+A primeira linha do arquivo limpo deve começar com `rowid,pl_name,hostname`. O campo do observatório é `disc_facility`.
 
-```text
-estrelas.csv
-planetas.csv
-observatorios.csv
-orbitas.csv
-descobertas.csv
-```
+### 3.3. Copiar o CSV para o contêiner
 
-Os CSVs devem seguir o formato de importação administrativa do Neo4j, com identificadores `:ID` para os nós e `:START_ID` e `:END_ID` para os relacionamentos.
-
-### 3.3. Parar o Neo4j principal
-
-A importação administrativa completa exige que o banco de destino esteja desligado. A opção `--overwrite-destination=true` substitui o banco `neo4j` existente: use apenas um volume de laboratório sem dados a preservar.
+Na instância utilizada, `SHOW SETTINGS` retornou `/var/lib/neo4j` para `server.directories.import`. Copie o arquivo para esse caminho:
 
 ```bash
-docker stop "$CONTAINER"
+docker cp exoplanets_clean.csv "$CONTAINER":/var/lib/neo4j/exoplanets_clean.csv
+docker exec -u neo4j "$CONTAINER" head -n 1 /var/lib/neo4j/exoplanets_clean.csv
 ```
 
-### 3.4. Executar a importação com um contêiner temporário
+### 3.4. Testar a leitura no Neo4j Browser
 
-Execute no diretório que contém os CSVs:
-
-```bash
-docker run --rm \
-  --volumes-from "$CONTAINER" \
-  --mount "type=bind,source=$(pwd),target=/csv,readonly" \
-  "$IMAGE" \
-  neo4j-admin database import full \
-  --overwrite-destination=true \
-  --nodes=Estrela=/csv/estrelas.csv \
-  --nodes=Planeta=/csv/planetas.csv \
-  --nodes=Observatorio=/csv/observatorios.csv \
-  --relationships=ORBITA=/csv/orbitas.csv \
-  --relationships=DESCOBERTO_POR=/csv/descobertas.csv \
-  neo4j
+```cypher
+LOAD CSV WITH HEADERS FROM 'file:///var/lib/neo4j/exoplanets_clean.csv' AS row
+RETURN row.pl_name AS planeta,
+       row.hostname AS estrela,
+       row.disc_facility AS observatorio,
+       row.default_flag AS principal
+LIMIT 5;
 ```
 
-O comando `docker run --rm` cria um contêiner temporário, removido após a execução. O parâmetro `--volumes-from` compartilha os volumes do contêiner principal, incluindo `/data`. O `--mount` disponibiliza os arquivos CSV dentro do contêiner temporário em /csv. A definição da variável `$IMAGE` utiliza a mesma imagem do Neo4j principal. O `neo4j-admin database import full` executa a importação, com parâmetros `--overwrite-destination=true`, que substitui o banco de destino eventualmente existente, `--nodes` que importa as entidades e seus respectivos rótulos e `--relationships` importa os relacionamentos. 
+### 3.5. Importar nós e relacionamentos
 
-### 3.5. Reiniciar o Neo4j
+Primeiro, execute separadamente as restrições de unicidade:
 
-Após confirmar que a importação terminou sem erros:
-
-```bash
-docker start "$CONTAINER"
+```cypher
+CREATE CONSTRAINT planeta_nome IF NOT EXISTS
+FOR (p:Planeta) REQUIRE p.nome IS UNIQUE;
 ```
 
-Acesse o Neo4j Browser: `http://localhost:7474`
+```cypher
+CREATE CONSTRAINT estrela_nome IF NOT EXISTS
+FOR (s:Estrela) REQUIRE s.nome IS UNIQUE;
+```
+
+```cypher
+CREATE CONSTRAINT observatorio_nome IF NOT EXISTS
+FOR (o:Observatorio) REQUIRE o.nome IS UNIQUE;
+```
+
+**Planetas, estrelas e órbitas:**
+
+```cypher
+LOAD CSV WITH HEADERS FROM 'file:///var/lib/neo4j/exoplanets_clean.csv' AS row
+WITH row
+WHERE row.default_flag = '1'
+  AND trim(coalesce(row.pl_name, '')) <> ''
+  AND trim(coalesce(row.hostname, '')) <> ''
+CALL (row) {
+    MERGE (p:Planeta {nome: trim(row.pl_name)})
+    SET p.pl_eqt = toFloatOrNull(row.pl_eqt),
+        p.pl_masse = toFloatOrNull(row.pl_masse),
+        p.pl_rade = toFloatOrNull(row.pl_rade),
+        p.disc_year = toIntegerOrNull(row.disc_year),
+        p.discoverymethod = row.discoverymethod
+
+    MERGE (s:Estrela {nome: trim(row.hostname)})
+    SET s.st_teff = toFloatOrNull(row.st_teff),
+        s.st_mass = toFloatOrNull(row.st_mass)
+
+    MERGE (p)-[r:ORBITA]->(s)
+    SET r.semi_eixo_maior = toFloatOrNull(row.pl_orbsmax),
+        r.excentricidade = toFloatOrNull(row.pl_orbeccen)
+} IN TRANSACTIONS OF 500 ROWS;
+```
+
+**Observatórios e descobertas:**
+
+```cypher
+LOAD CSV WITH HEADERS FROM 'file:///var/lib/neo4j/exoplanets_clean.csv' AS row
+WITH row
+WHERE row.default_flag = '1'
+  AND trim(coalesce(row.pl_name, '')) <> ''
+  AND trim(coalesce(row.disc_facility, '')) <> ''
+CALL (row) {
+    MATCH (p:Planeta {nome: trim(row.pl_name)})
+    MERGE (o:Observatorio {nome: trim(row.disc_facility)})
+    MERGE (p)-[:DESCOBERTO_POR]->(o)
+} IN TRANSACTIONS OF 500 ROWS;
+```
+
+A importação usa `default_flag = '1'` para selecionar o registro principal de cada planeta e `MERGE` para evitar duplicação de nós e relacionamentos. Os relacionamentos `ORBITA` e `DESCOBERTO_POR` mantêm a modelagem do desafio.
 
 ### 3.6. Validar os dados importados
 
